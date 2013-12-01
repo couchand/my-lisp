@@ -11,8 +11,7 @@ void error(char* message)
 }
 
 int assertions = 0;
-
-int assertEquals(int expected, int actual, char* message)
+void assertEquals(int expected, int actual, char* message)
 {
     ++assertions;
     if (expected != actual)
@@ -23,54 +22,46 @@ int assertEquals(int expected, int actual, char* message)
             actual,
             message
         );
-        return assertions;
+        throw assertions;
     }
-    return 0;
 }
 
-int testEOF()
+Lexer* buildLexer(std::stringstream &input)
 {
-    std::stringstream input;
-
     Lexer *lex = new Lexer(input);
     if (lex == 0)
     {
         error("unable to create lexer");
-        return ++assertions;
+        throw ++assertions;
     }
+    return lex;
+}
 
-    int nextToken = lex->getToken();
-    int ret = assertEquals(token_eof, nextToken, "eof expected");
+void assertEOF(int token)
+{
+    assertEquals(token_eof, token, "eof expected");
+}
 
-    return ret;
+void testEOF()
+{
+    std::stringstream input;
+    Lexer *lex = buildLexer(input);
+    assertEOF(lex->getToken());
 }
 
 int testNumber()
 {
     std::stringstream input;
-
     input << "42";
-
-    Lexer *lex = new Lexer(input);
-    if (lex == 0)
-    {
-        error("unable to create lexer");
-        return ++assertions;
-    }
+    Lexer *lex = buildLexer(input);
 
     int nextToken = lex->getToken();
-    int ret = assertEquals(token_number, nextToken, "number expected");
-    if (ret) return ret;
-
-    nextToken = lex->getToken();
-    ret = assertEquals(token_eof, nextToken, "eof expected");
-
-    return ret;
+    assertEquals(token_number, nextToken, "number expected");
+    assertEOF(lex->getToken());
 }
 
 int main(int argc, char** argv)
 {
-    return
-        testEOF() &&
-        testNumber();
+    testEOF();
+    testNumber();
 };
