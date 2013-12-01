@@ -3,6 +3,22 @@
 #include <iostream>
 #include <vector>
 
+#include "llvm/Analysis/Verifier.h"
+
+llvm::Function *Generator::expressionToFunction(AST::Expression *expression)
+{
+    llvm::Function *fn = buildFunction("", 0);
+
+    llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", fn);
+    builder->SetInsertPoint(block);
+
+    llvm::Value *value = generate(expression);
+    builder->CreateRet(value);
+
+    llvm::verifyFunction(*fn);
+    return fn;
+}
+
 llvm::Function *Generator::buildFunction(std::string name, unsigned parameters)
 {
     std::vector<llvm::Type*> doubles(

@@ -33,6 +33,10 @@ class Generator
     }
 
     Builder *getBuilder() { return builder; }
+    llvm::Module *getModule() { return module; }
+    llvm::LLVMContext *getContext() { return context; }
+    llvm::Function *buildFunction(std::string name, unsigned parameters);
+    llvm::Function *expressionToFunction(AST::Expression *expression);
     virtual llvm::Function *lookupFn(std::string name);
 
     virtual llvm::Value *generate(AST::Expression *expression);
