@@ -1,6 +1,6 @@
 CC := clang++
-CFLAGS := -g -Wall $(llvm-config -cppflags --libs core jit native) -O3
-OFLAGS := $(llvm-config --ldflags)
+CFLAGS := -g -Wall `llvm-config --cppflags` -O3
+OFLAGS := -rdynamic
 SRC_DIR := src
 INC_DIR := include
 OBJ_DIR := obj
@@ -9,13 +9,13 @@ SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES := $(SRC_FILES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 TEST_SRC_FILES := $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJ_FILES := $(TEST_SRC_FILES:$(TEST_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-LDLIBS := -lpthread -lrt
+LDLIBS := -lpthread -lrt `llvm-config --ldflags --libs`# core jit native`
 TARGET := my-lisp
 
 all: $(TARGET) test
 
 $(TARGET): $(OBJ_FILES)
-	$(CC) $(CFLAGS) -g  $(OFLAGS) -o $@ $^ $(LDLIBS)
+	$(CC) $(CFLAGS) -g $(OFLAGS) -o $@ $^ $(LDLIBS)
 
 test: $(TEST_DIR)/test
 
