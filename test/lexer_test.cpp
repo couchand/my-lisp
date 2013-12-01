@@ -67,6 +67,23 @@ void testMultiple()
     assertEquals(token_number, lex->getToken(), "1337");
     assertEquals(token_identifier, lex->getToken(), "general");
     assertEquals(')', lex->getToken(), ")");
+    assertEOF(lex->getToken());
+}
+
+void testWhitespace()
+{
+    std::stringstream input("  1     2 \t  3 \n 4 \r 5 \n\r6\n7\n\t\t8\n\n\n  ");
+    Lexer *lex = buildLexer(input);
+
+    assertEquals(token_number, lex->getToken(), "1");
+    assertEquals(token_number, lex->getToken(), "2");
+    assertEquals(token_number, lex->getToken(), "3");
+    assertEquals(token_number, lex->getToken(), "4");
+    assertEquals(token_number, lex->getToken(), "5");
+    assertEquals(token_number, lex->getToken(), "6");
+    assertEquals(token_number, lex->getToken(), "7");
+    assertEquals(token_number, lex->getToken(), "8");
+    assertEOF(lex->getToken());
 }
 }
 
@@ -77,4 +94,5 @@ void testLexer()
     testDecimal();
     testIdentifier();
     testMultiple();
+    testWhitespace();
 }
