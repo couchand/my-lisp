@@ -31,6 +31,29 @@ void testInteger()
     }
 }
 
+void testDecimal()
+{
+    std::stringstream input("3.141592653589793238");
+    Parser *par = buildParser(input);
+
+    AST::Expression *parsed = par->parse();
+    if (parsed == 0)
+    {
+        error("unable to parse expression");
+    }
+
+    AST::NumberLiteral *num = dynamic_cast<AST::NumberLiteral*>(parsed);
+    if (num == 0)
+    {
+        error("unexpected expression type");
+    }
+
+    if (num->getValue() != 3.141592653589793238)
+    {
+        error("expected pi");
+    }
+}
+
 void testIdentifier()
 {
     std::stringstream input("foobar");
@@ -59,5 +82,6 @@ void testIdentifier()
 void testParser()
 {
     testInteger();
+    testDecimal();
     testIdentifier();
 }
