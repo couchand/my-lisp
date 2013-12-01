@@ -21,7 +21,10 @@ test: $(TEST_OBJ_FILES) $(OBJ_FILES)
 	$(CC) $(CFLAGS) -g $(OFLAGS) -o $(TEST_DIR)/$@ $^ $(LDLIBS)
 
 $(OBJ_DIR)/%_test.o: $(TEST_DIR)/%_test.cpp
-	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $< 
+	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $<
+
+$(OBJ_DIR)/test_%.o: $(TEST_DIR)/test_%.cpp
+	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $<
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $< 
