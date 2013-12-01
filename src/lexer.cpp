@@ -1,18 +1,19 @@
 // Lexer
 
 #include "lexer.h"
+
 int Lexer::getToken()
 {
     static int lastChar = ' ';
 
-    while (isspace(lastChar)) lastChar = getchar();
+    while (isspace(lastChar)) lastChar = input.get();
 
-    if (lastChar == EOF) return token_eof;
+    if (input.eof()) return token_eof;
 
     if (isalpha(lastChar))
     {
         identifierStr = lastChar;
-        while (isalnum(lastChar = getchar())) identifierStr += lastChar;
+        while (isalnum(lastChar = input.get())) identifierStr += lastChar;
         return token_identifier;
     }
 
@@ -22,11 +23,11 @@ int Lexer::getToken()
         do
         {
             numStr += lastChar;
-            lastChar = getchar();
+            lastChar = input.get();
         } while (isdigit(lastChar) || lastChar == '.');
     }
 
     int thisChar = lastChar;
-    lastChar = getchar();
+    lastChar = input.get();
     return thisChar;
 }

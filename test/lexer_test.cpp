@@ -1,6 +1,7 @@
 // Lexer test
 
-#include <cstdio>
+#include <iostream>
+#include <sstream>
 
 #include "lexer.h"
 
@@ -23,15 +24,11 @@ int assertEquals(int expected, int actual, char* message)
     return 0;
 }
 
-int main(int argc, char** argv)
-{
-    return
-        testEOF();
-};
-
 int testEOF()
 {
-    Lexer *lex = new Lexer();
+    std::stringstream input;
+
+    Lexer *lex = new Lexer(input);
     if (lex == 0)
     {
         error("unable to create lexer");
@@ -44,3 +41,9 @@ int testEOF()
 
     return ret;
 }
+
+int main(int argc, char** argv)
+{
+    return
+        testEOF();
+};
