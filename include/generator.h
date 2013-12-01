@@ -15,11 +15,6 @@
 #include "builtins.h"
 #include "ast.h"
 
-namespace Util
-{
-    void registerBuiltin(std::string name, llvm::Module *module, llvm::LLVMContext *context);
-}
-
 class Generator
 {
     llvm::LLVMContext *context;
@@ -34,7 +29,7 @@ class Generator
         builder = new Builder(*context);
         module = new llvm::Module("my-lisp", *context);
 
-        Util::registerBuiltin("add", module, context);
+        buildFunction("add", 2);
     }
 
     Builder *getBuilder() { return builder; }

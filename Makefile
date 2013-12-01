@@ -9,7 +9,7 @@ SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES := $(SRC_FILES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 TEST_SRC_FILES := $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJ_FILES := $(TEST_SRC_FILES:$(TEST_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-LDLIBS := -lpthread -lrt `llvm-config --ldflags --libs`# core jit native`
+LDLIBS := -lpthread -lrt `llvm-config --ldflags --libs core jit native`
 TARGET := my-lisp
 
 all: lint $(TARGET) test

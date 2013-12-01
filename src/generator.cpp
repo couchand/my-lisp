@@ -3,14 +3,14 @@
 #include <iostream>
 #include <vector>
 
-void Util::registerBuiltin(std::string name, llvm::Module *module, llvm::LLVMContext *context)
+llvm::Function *Generator::buildFunction(std::string name, unsigned parameters)
 {
     std::vector<llvm::Type*> doubles(
-        2,
+        parameters,
         llvm::Type::getDoubleTy(*context)
     );
 
-    llvm::Function *add = llvm::Function::Create(
+    return llvm::Function::Create(
         llvm::FunctionType::get(
             llvm::Type::getDoubleTy(*context),
             doubles,
