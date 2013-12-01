@@ -17,8 +17,8 @@ all: $(TARGET) test
 $(TARGET): $(OBJ_FILES)
 	$(CC) $(CFLAGS) -g  $(OFLAGS) -o $@ $^ $(LDLIBS)
 
-test: $(TEST_OBJ_FILES)
-	$(CC) $(CFLAGS) -g $(OFLAGS) -o $(TEST_DIR)/$@ $(OBJ_FILES) $^ $(LDLIBS)
+test: $(TEST_OBJ_FILES) $(OBJ_FILES)
+	$(CC) $(CFLAGS) -g $(OFLAGS) -o $(TEST_DIR)/$@ $^ $(LDLIBS)
 
 $(OBJ_DIR)/%_test.o: $(TEST_DIR)/%_test.cpp
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $< 
@@ -27,7 +27,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $< 
 
 clean:
-	rm -f $(OBJ_FILES) $(TEST_OBJ_FILES) *~ $(TARGET)
+	rm -f $(OBJ_FILES) $(TEST_OBJ_FILES) *~ $(TARGET) $(TEST_DIR)/test
 
 install:
 	cp $(TARGET) /usr/local/bin
