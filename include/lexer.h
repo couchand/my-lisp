@@ -1,5 +1,8 @@
 // Lexer
 
+#ifndef LEXER_H
+#define LEXER_H
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -24,3 +27,5 @@ class Lexer
     int getToken();
     double getLastNumber();
 };
+
+#endif
