@@ -49,10 +49,9 @@ void testEOF()
     assertEOF(lex->getToken());
 }
 
-int testNumber()
+void testNumber()
 {
-    std::stringstream input;
-    input << "42";
+    std::stringstream input("42");
     Lexer *lex = buildLexer(input);
 
     int nextToken = lex->getToken();

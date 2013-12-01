@@ -25,6 +25,7 @@ int Lexer::getToken()
             numStr += lastChar;
             lastChar = input.get();
         } while (isdigit(lastChar) || lastChar == '.');
+        return token_number;
     }
 
     int thisChar = lastChar;
