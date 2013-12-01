@@ -1,5 +1,7 @@
 // Lexer
 
+#include <cstdlib>
+
 #include "lexer.h"
 
 int Lexer::getToken()
@@ -23,10 +25,17 @@ int Lexer::getToken()
             numStr += lastChar;
             lastChar = input.get();
         } while (isdigit(lastChar) || lastChar == '.');
+
+        numVal = strtod(numStr.c_str(), 0);
         return token_number;
     }
 
     int thisChar = lastChar;
     lastChar = input.get();
     return thisChar;
+}
+
+double Lexer::getLastNumber()
+{
+    return numVal;
 }

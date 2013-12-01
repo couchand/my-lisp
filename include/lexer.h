@@ -22,4 +22,5 @@ class Lexer
     Lexer(std::istream &_input) : input(_input), lastChar(' ') {}
 
     int getToken();
+    double getLastNumber();
 };

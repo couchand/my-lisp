@@ -56,6 +56,7 @@ void testInteger()
 
     int nextToken = lex->getToken();
     assertEquals(token_number, nextToken, "number expected");
+    assertEquals(42, lex->getLastNumber(), "keep the last number");
     assertEOF(lex->getToken());
 }
 
@@ -66,6 +67,7 @@ void testDecimal()
 
     int nextToken = lex->getToken();
     assertEquals(token_number, nextToken, "number expected");
+    assertEquals(3.141592653589793238, lex->getLastNumber(), "keep the last number");
     assertEOF(lex->getToken());
 }
 
