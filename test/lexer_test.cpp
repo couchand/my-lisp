@@ -49,9 +49,19 @@ void testEOF()
     assertEOF(lex->getToken());
 }
 
-void testNumber()
+void testInteger()
 {
     std::stringstream input("42");
+    Lexer *lex = buildLexer(input);
+
+    int nextToken = lex->getToken();
+    assertEquals(token_number, nextToken, "number expected");
+    assertEOF(lex->getToken());
+}
+
+void testDecimal()
+{
+    std::stringstream input("3.141592653589793238");
     Lexer *lex = buildLexer(input);
 
     int nextToken = lex->getToken();
@@ -72,6 +82,7 @@ void testIdentifier()
 int main(int argc, char** argv)
 {
     testEOF();
-    testNumber();
+    testInteger();
+    testDecimal();
     testIdentifier();
 };
