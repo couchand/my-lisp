@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstring>
 
 #include "test_helper.h"
 
@@ -49,6 +50,8 @@ void testIdentifier()
 
     int nextToken = lex->getToken();
     assertEquals(token_identifier, nextToken, "identifier expected");
+    if (strncmp("foobar", lex->getLastIdentifier(), 6))
+        throw "expected foobar";
     assertEOF(lex->getToken());
 }
 

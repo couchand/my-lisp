@@ -39,3 +39,8 @@ double Lexer::getLastNumber()
 {
     return numVal;
 }
+
+const char* Lexer::getLastIdentifier()
+{
+    return identifierStr.c_str();
+}

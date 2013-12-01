@@ -26,6 +26,7 @@ class Lexer
 
     int getToken();
     double getLastNumber();
+    const char* getLastIdentifier();
 };
 
 #endif
