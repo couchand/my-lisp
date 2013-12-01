@@ -15,5 +15,6 @@ class Lexer
     std::string identifierStr;
     double numVal;
 
+  public:
     int getToken();
 };
