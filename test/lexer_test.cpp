@@ -5,13 +5,13 @@
 
 #include "lexer.h"
 
-void error(char* message)
+void error(const char* message)
 {
     printf("Error: %s\n", message);
 }
 
 int assertions = 0;
-void assertEquals(int expected, int actual, char* message)
+void assertEquals(int expected, int actual, const char* message)
 {
     ++assertions;
     if (expected != actual)
