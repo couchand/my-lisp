@@ -79,10 +79,28 @@ void testIdentifier()
     assertEOF(lex->getToken());
 }
 
+void testMultiple()
+{
+    std::stringstream input("i am a very model of 4 1337 general )");
+    Lexer *lex = buildLexer(input);
+
+    assertEquals(token_identifier, lex->getToken(), "i");
+    assertEquals(token_identifier, lex->getToken(), "am");
+    assertEquals(token_identifier, lex->getToken(), "a");
+    assertEquals(token_identifier, lex->getToken(), "very");
+    assertEquals(token_identifier, lex->getToken(), "model");
+    assertEquals(token_identifier, lex->getToken(), "of");
+    assertEquals(token_number, lex->getToken(), "4");
+    assertEquals(token_number, lex->getToken(), "1337");
+    assertEquals(token_identifier, lex->getToken(), "general");
+    assertEquals(')', lex->getToken(), ")");
+}
+
 int main(int argc, char** argv)
 {
     testEOF();
     testInteger();
     testDecimal();
     testIdentifier();
+    testMultiple();
 };
