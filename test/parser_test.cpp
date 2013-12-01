@@ -77,6 +77,18 @@ void testIdentifier()
         error("expected foobar");
     }
 }
+
+void testCall()
+{
+    std::stringstream input("cons(foo bar)");
+    Parser *par = buildParser(input);
+
+    AST::Expression *parsed = par->parse();
+    if (parsed == 0)
+    {
+        error("unable to parse expression");
+    }
+}
 }
 
 void testParser()
@@ -84,4 +96,5 @@ void testParser()
     testInteger();
     testDecimal();
     testIdentifier();
+    testCall();
 }

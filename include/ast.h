@@ -4,6 +4,7 @@
 #define AST_H
 
 #include <string>
+#include <vector>
 
 namespace AST
 {
@@ -29,6 +30,14 @@ namespace AST
         Identifier(const std::string &_name) : name(_name) {}
 
         const char* getName() { return name.c_str(); }
+    };
+
+    class Call : public Expression
+    {
+        std::string name;
+        std::vector<AST::Expression*> arguments;
+      public:
+        Call(const std::string &_name, const std::vector<AST::Expression*> &_arguments) : name(_name), arguments(_arguments) {}
     };
 }
 

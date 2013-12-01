@@ -1,5 +1,7 @@
 // Parser
 
+#include <vector>
+
 #include "parser.h"
 
 AST::Expression *Parser::parseNumber()
@@ -11,9 +13,24 @@ AST::Expression *Parser::parseNumber()
 
 AST::Expression *Parser::parseIdentifier()
 {
-    AST::Expression *result = new AST::Identifier(lexer->getLastIdentifier());
+    const char* name = lexer->getLastIdentifier();
+
     getNextToken();
-    return result;
+    if (currentToken != '(')
+    {
+        return new AST::Identifier(name);
+    }
+    getNextToken();
+
+    std::vector<AST::Expression*> arguments;
+    while (currentToken != ')')
+    {
+        AST::Expression *argument = parse();
+        arguments.push_back(argument);
+    }
+    getNextToken();
+
+    return new AST::Call(name, arguments);
 }
 
 AST::Expression *Parser::parsePrimary()
