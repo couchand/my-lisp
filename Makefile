@@ -19,7 +19,7 @@ $(TARGET): $(OBJ_FILES)
 
 test: $(TEST_DIR)/test
 
-$(TEST_DIR)/test: $(TEST_OBJ_FILES) $(OBJ_FILES)
+$(TEST_DIR)/test: $(TEST_OBJ_FILES) $(filter-out $(OBJ_DIR)/$(TARGET).o, $(OBJ_FILES))
 	$(CC) $(CFLAGS) -g $(OFLAGS) -o $@ $^ $(LDLIBS)
 
 $(OBJ_DIR)/%_test.o: $(TEST_DIR)/%_test.cpp
