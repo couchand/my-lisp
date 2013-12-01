@@ -4,8 +4,6 @@
 
 int Lexer::getToken()
 {
-    static int lastChar = ' ';
-
     while (isspace(lastChar)) lastChar = input.get();
 
     if (input.eof()) return token_eof;
