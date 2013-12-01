@@ -4,6 +4,7 @@
 
 extern void testLexer();
 extern void testParser();
+extern void testGenerator();
 
 int main(int argc, char** argv)
 {
@@ -18,6 +19,14 @@ int main(int argc, char** argv)
     try
     {
         testParser();
+    }
+    catch (const char* ex)
+    {
+        std::cout << "Exception: " << ex << std::endl;
+    }
+    try
+    {
+        testGenerator();
     }
     catch (const char* ex)
     {

@@ -8,6 +8,7 @@
 
 #include "lexer.h"
 #include "parser.h"
+#include "generator.h"
 
 void error(const char* message);
 
@@ -15,5 +16,6 @@ void assertEquals(int expected, int actual, const char* message);
 
 Lexer *buildLexer(std::stringstream &input);
 Parser *buildParser(std::stringstream &input);
+AST::Expression *parse(std::stringstream &input);
 
 #endif
