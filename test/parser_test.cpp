@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cstring>
 
 #include "test_helper.h"
 
@@ -29,9 +30,34 @@ void testInteger()
         error("expected 42");
     }
 }
+
+void testIdentifier()
+{
+    std::stringstream input("foobar");
+    Parser *par = buildParser(input);
+
+    AST::Expression *parsed = par->parse();
+    if (parsed == 0)
+    {
+        error("unable to parse expression");
+    }
+
+    AST::Identifier *id = dynamic_cast<AST::Identifier*>(parsed);
+    if (id == 0)
+    {
+        error("unexpected expression type");
+    }
+
+    const char* name = id->getName();
+    if (strncmp(name, "foobar", 5))
+    {
+        error("expected foobar");
+    }
+}
 }
 
 void testParser()
 {
     testInteger();
+    testIdentifier();
 }

@@ -9,6 +9,13 @@ AST::Expression *Parser::parseNumber()
     return result;
 }
 
+AST::Expression *Parser::parseIdentifier()
+{
+    AST::Expression *result = new AST::Identifier(lexer->getLastIdentifier());
+    getNextToken();
+    return result;
+}
+
 AST::Expression *Parser::parsePrimary()
 {
     switch (currentToken)
@@ -18,6 +25,8 @@ AST::Expression *Parser::parsePrimary()
         throw "unknown token";
       case token_number:
         return parseNumber();
+      case token_identifier:
+        return parseIdentifier();
     }
 }
 

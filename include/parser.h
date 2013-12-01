@@ -17,6 +17,7 @@ class Parser
     }
 
     AST::Expression *parseNumber();
+    AST::Expression *parseIdentifier();
     AST::Expression *parsePrimary();
 
   public:
