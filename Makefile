@@ -17,8 +17,10 @@ all: $(TARGET) test
 $(TARGET): $(OBJ_FILES)
 	$(CC) $(CFLAGS) -g  $(OFLAGS) -o $@ $^ $(LDLIBS)
 
-test: $(TEST_OBJ_FILES) $(OBJ_FILES)
-	$(CC) $(CFLAGS) -g $(OFLAGS) -o $(TEST_DIR)/$@ $^ $(LDLIBS)
+test: $(TEST_DIR)/test
+
+$(TEST_DIR)/test: $(TEST_OBJ_FILES) $(OBJ_FILES)
+	$(CC) $(CFLAGS) -g $(OFLAGS) -o $@ $^ $(LDLIBS)
 
 $(OBJ_DIR)/%_test.o: $(TEST_DIR)/%_test.cpp
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $<

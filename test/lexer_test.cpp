@@ -5,6 +5,9 @@
 
 #include "test_helper.h"
 
+namespace
+{
+
 void assertEOF(int token)
 {
     assertEquals(token_eof, token, "eof expected");
@@ -64,6 +67,7 @@ void testMultiple()
     assertEquals(token_number, lex->getToken(), "1337");
     assertEquals(token_identifier, lex->getToken(), "general");
     assertEquals(')', lex->getToken(), ")");
+}
 }
 
 void testLexer()
