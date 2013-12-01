@@ -10,8 +10,7 @@ namespace
 void testInteger()
 {
     std::stringstream input("42");
-    Lexer *lex = buildLexer(input);
-    Parser *par = buildParser(lex);
+    Parser *par = buildParser(input);
 
     AST::Expression *parsed = par->parse();
     if (parsed == 0)

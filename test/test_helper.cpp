@@ -30,8 +30,9 @@ Lexer *buildLexer(std::stringstream &input)
     return lex;
 }
 
-Parser *buildParser(Lexer *lexer)
+Parser *buildParser(std::stringstream &input)
 {
+    Lexer *lexer = buildLexer(input);
     Parser *parser = new Parser(lexer);
     if (parser == 0)
     {

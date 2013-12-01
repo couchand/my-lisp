@@ -22,11 +22,13 @@ namespace AST
         double getValue() { return val; }
     };
 
-    class VariableReference : public Expression
+    class Identifier : public Expression
     {
         std::string name;
       public:
-        VariableReference(const std::string &_name) : name(_name) {}
+        Identifier(const std::string &_name) : name(_name) {}
+
+        const char* getName() { return name.c_str(); }
     };
 }
 
