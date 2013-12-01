@@ -16,10 +16,10 @@ class Lexer
     std::istream &input;
     std::string identifierStr;
     double numVal;
-    int lastChar = ' ';
+    int lastChar;
 
   public:
-    Lexer(std::istream &_input) : input(_input) {}
+    Lexer(std::istream &_input) : input(_input), lastChar(' ') {}
 
     int getToken();
 };
