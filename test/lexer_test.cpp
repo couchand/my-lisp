@@ -59,8 +59,19 @@ void testNumber()
     assertEOF(lex->getToken());
 }
 
+void testIdentifier()
+{
+    std::stringstream input("foobar");
+    Lexer *lex = buildLexer(input);
+
+    int nextToken = lex->getToken();
+    assertEquals(token_identifier, nextToken, "identifier expected");
+    assertEOF(lex->getToken());
+}
+
 int main(int argc, char** argv)
 {
     testEOF();
     testNumber();
+    testIdentifier();
 };
