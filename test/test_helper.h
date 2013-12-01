@@ -7,11 +7,13 @@
 #include <sstream>
 
 #include "lexer.h"
+#include "parser.h"
 
 void error(const char* message);
 
 void assertEquals(int expected, int actual, const char* message);
 
 Lexer *buildLexer(std::stringstream &input);
+Parser *buildParser(Lexer *lexer);
 
 #endif

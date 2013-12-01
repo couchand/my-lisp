@@ -29,3 +29,14 @@ Lexer *buildLexer(std::stringstream &input)
     }
     return lex;
 }
+
+Parser *buildParser(Lexer *lexer)
+{
+    Parser *parser = new Parser(lexer);
+    if (parser == 0)
+    {
+        error("unable to create parser");
+        throw "test error";
+    }
+    return parser;
+}
