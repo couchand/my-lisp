@@ -1,0 +1,39 @@
+define addTwo(x)
+    add(x 2)
+
+define one()
+    1
+
+define and(l r)
+    if l then
+        if r then
+            1
+        else
+            0
+    else
+        0
+
+define or(l r)
+    if l then
+        1
+    else if r then
+        1
+    else
+        0
+
+addTwo(2)
+addTwo(42)
+addTwo(420)
+addTwo(one())
+addTwo(add(addTwo(one()) one()))
+addTwo(2)
+addTwo(add(one() one()))
+
+print(35)
+print(36)
+print(37)
+print(38)
+print(39)
+print(10)
+
+if and(or(0 0) or(0 1)) then 42 else 7

@@ -1,0 +1,117 @@
+define not(x)
+  if x then
+    0
+  else
+    1
+
+define or(a b)
+  if a then
+    1
+  else if b then
+    1
+  else
+    0
+
+define and(a b)
+  if a then
+    if b then
+      1
+    else
+      0
+  else
+    0
+
+define gt(l r)
+  lt(r l)
+
+define gte(l r)
+  not(lt(l r))
+
+define eq(l r)
+  not(or(lt(l r) gt(l r)))
+
+define mandleconverger(r i it cr ci)
+  if or(
+    gt(it 255)
+    gt(
+      add(mul(r r) mul(i i))
+      4
+    )) then
+    it
+  else
+    mandleconverger(
+      add(
+        sub(mul(r r) mul(i i))
+        cr
+      )
+      add(
+        mul(2 mul(r i))
+        ci
+      )
+      add(it 1)
+      cr
+      ci
+    )
+
+define mandleconverge(r i)
+  mandleconverger(r i 0 r i)
+
+define printd(d)
+  if gt(d 8) then
+    print(32)
+  else if gt(d 4) then
+    print(43)
+  else if gt(d 2) then
+    print(46)
+  else
+    print(42)
+
+define newline()
+  print(10)
+
+printd(0)
+printd(1)
+printd(2)
+printd(3)
+printd(4)
+printd(5)
+printd(6)
+printd(7)
+printd(8)
+printd(9)
+printd(0)
+
+newline()
+newline()
+
+define do(a b)
+  b
+
+define mandlerow(row col max step)
+  if gte(col max) then
+    row
+  else
+    do(
+      printd(mandleconverge(col row))
+      mandlerow(row add(col step) max step)
+    )
+
+define mandlehelp(row rowmax rowstep colmin colmax colstep)
+  if gte(row rowmax) then
+    row
+  else
+    do(
+      mandlerow(row colmin colmax colstep)
+      do(
+        newline()
+        mandlehelp(add(row rowstep) rowmax rowstep colmin colmax colstep)
+      )
+    )
+
+define mandle(xmin xmax width ymin ymax height)
+  mandlehelp(
+    ymin ymax quo(sub(ymax ymin) height)
+    xmin xmax quo(sub(xmax xmin) width)
+  )
+
+mandle(0.25 0.5 78 0.5 0.75 40)
