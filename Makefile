@@ -12,7 +12,7 @@ TEST_OBJ_FILES := $(TEST_SRC_FILES:$(TEST_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 LDLIBS := -lpthread -lrt `llvm-config --ldflags --libs core jit native`
 TARGET := my-lisp
 
-all: lint $(TARGET) test
+all: lint $(TARGET) test benchmark
 
 $(TARGET): $(OBJ_FILES)
 	$(CC) $(CFLAGS) -g $(OFLAGS) -o $@ $^ $(LDLIBS)
@@ -30,6 +30,20 @@ $(OBJ_DIR)/test_%.o: $(TEST_DIR)/test_%.cpp
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $< 
+
+benchmark: benchmark/liebniz-recursive benchmark/liebniz-iterative
+
+benchmark/liebniz-recursive: benchmark/liebniz-recursive.o obj/builtins.o
+	$(CC) $(CFLAGS) $(OFLAGS) -o $@ $^ $(LDLIBS)
+
+benchmark/liebniz-recursive.o: benchmark/liebniz-recursive.cpp
+	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $<
+
+benchmark/liebniz-iterative: benchmark/liebniz-iterative.o obj/builtins.o
+	$(CC) $(CFLAGS) $(OFLAGS) -o $@ $^ $(LDLIBS)
+
+benchmark/liebniz-iterative.o: benchmark/liebniz-iterative.cpp
+	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $<
 
 LINT := cppcheck
 LINTFLAGS := -q --enable=all --check-config -I$(INC_DIR) -I`llvm-config --includedir`

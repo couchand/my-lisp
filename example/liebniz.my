@@ -1,0 +1,55 @@
+define not(x)
+  if x then
+    0
+  else
+    1
+
+define gt(l r)
+  lt(r l)
+
+define gte(l r)
+  not(lt(l r))
+
+define do(a b)
+  b
+
+define newline()
+  print(10)
+
+define term(n)
+  quo(pow(-1 n) add(mul(2 n) 1))
+
+define kernel(sofar n max)
+  if gte(n max) then
+    sofar
+  else
+    kernel(
+      add(sofar term(n))
+      add(n 1)
+      max
+    )
+
+define husk(terms)
+  mul(4 kernel(0 0 terms))
+
+print(48)
+husk(100000)
+print(49)
+husk(100000)
+print(50)
+husk(100000)
+print(51)
+husk(100000)
+print(52)
+husk(100000)
+print(53)
+husk(100000)
+print(54)
+husk(100000)
+print(55)
+husk(100000)
+print(56)
+husk(100000)
+print(57)
+husk(100000)
+newline()

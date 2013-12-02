@@ -1,3 +1,6 @@
 obj
 my-lisp
 test/test
+benchmark/*.o
+benchmark/liebniz-recursive
+benchmark/liebniz-iterative

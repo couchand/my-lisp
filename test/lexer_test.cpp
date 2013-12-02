@@ -43,6 +43,17 @@ void testDecimal()
     assertEOF(lex->getToken());
 }
 
+void testNegative()
+{
+    std::stringstream input("-42");
+    Lexer *lex = buildLexer(input);
+
+    int nextToken = lex->getToken();
+    assertEquals(token_number, nextToken, "number expected");
+    assertEquals(-42, lex->getLastNumber(), "keep the last number");
+    assertEOF(lex->getToken());
+}
+
 void testIdentifier()
 {
     std::stringstream input("foobar");
@@ -116,6 +127,7 @@ void testLexer()
     testEOF();
     testInteger();
     testDecimal();
+    testNegative();
     testIdentifier();
     testIfThenElse();
     testDefine();

@@ -23,7 +23,7 @@ int Lexer::getToken()
         return token_identifier;
     }
 
-    if (isdigit(lastChar) || lastChar == '.')
+    if (isdigit(lastChar) || lastChar == '.' || lastChar == '-')
     {
         std::string numStr;
         do
