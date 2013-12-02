@@ -5,6 +5,9 @@
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/JIT.h"
 #include "llvm/Support/TargetSelect.h"
+#include "llvm/Analysis/Passes.h"
+#include "llvm/DataLayout.h"
+#include "llvm/Transforms/Scalar.h"
 
 #include "ast.h"
 #include "lexer.h"
@@ -31,6 +34,17 @@ try
         std::cout << "unable to initialize engine:  " << errors << std::endl;
         return 1;
     }
+
+    llvm::FunctionPassManager *passManager = new llvm::FunctionPassManager(generator->getModule());
+
+    passManager->add(new llvm::DataLayout(*engine->getDataLayout()));
+    passManager->add(llvm::createBasicAliasAnalysisPass());
+    passManager->add(llvm::createInstructionCombiningPass());
+    passManager->add(llvm::createReassociatePass());
+    passManager->add(llvm::createGVNPass());
+    passManager->add(llvm::createCFGSimplificationPass());
+
+    passManager->doInitialization();
 
     while (1)
     {
@@ -68,6 +82,8 @@ try
                 return 5;
             }
         }
+
+        passManager->run(*fnTree);
 
         void *fnPtr = engine->getPointerToFunction(fnTree);
         if (fnPtr == 0)
