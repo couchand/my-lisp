@@ -17,6 +17,7 @@ int main(int argc, char **argv)
 {
 try
 {
+    double result;
     Lexer lexer(std::cin);
     Parser parser(&lexer);
     generator = new Generator();
@@ -34,9 +35,8 @@ try
     while (1)
     {
         AST::Tree *tree = parser.parse();
-        if (tree == 0) return 0;
+        if (tree == 0) break;
 
-        std::cout << "Parsed: " << std::endl;
         AST::Expression *expression = dynamic_cast<AST::Expression*>(tree);
         llvm::Function *fnTree;
 
@@ -48,7 +48,6 @@ try
                 std::cout << "unable to create function" << std::endl;
                 return 2;
             }
-            fnTree->dump();
         }
         else
         {
@@ -62,7 +61,6 @@ try
                     std::cout << "unable to create function" << std::endl;
                     return 2;
                 }
-                fnTree->dump();
             }
             else
             {
@@ -79,8 +77,11 @@ try
         }
 
         double (*fn)() = (double (*)())(intptr_t)fnPtr;
-        std::cout << "Evaluates to " << fn() << std::endl;
+        result = fn();
     }
+
+    std::cout << "Evaluates to " << result << std::endl;
+    return 0;
 }
 catch (const char* err)
 {

@@ -32,6 +32,7 @@ class Generator
         module = new llvm::Module("my-lisp", *context);
 
         buildFunction("add", 2);
+        buildFunction("print", 1);
         addGlobal("nil", 0);
     }
 
