@@ -55,6 +55,17 @@ void testIdentifier()
     assertEOF(lex->getToken());
 }
 
+void testIfThenElse()
+{
+    std::stringstream input("if then else");
+    Lexer *lex = buildLexer(input);
+
+    assertEquals(token_if, lex->getToken(), "if expected");
+    assertEquals(token_then, lex->getToken(), "then expected");
+    assertEquals(token_else, lex->getToken(), "else expected");
+    assertEOF(lex->getToken());
+}
+
 void testDefine()
 {
     std::stringstream input("define");
@@ -106,6 +117,7 @@ void testLexer()
     testInteger();
     testDecimal();
     testIdentifier();
+    testIfThenElse();
     testDefine();
     testMultiple();
     testWhitespace();

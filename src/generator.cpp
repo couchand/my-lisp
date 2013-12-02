@@ -104,3 +104,53 @@ llvm::Value *Generator::generate(AST::Expression *expression)
 {
     return expression->generate(this);
 }
+
+llvm::Value *Generator::generateBool(AST::Expression *expression)
+{
+    llvm::Value *value = expression->generate(this);
+
+    return builder->CreateFCmpONE(
+        value,
+        llvm::ConstantFP::get(*context, llvm::APFloat(0.0)),
+        "ifcond"
+    );
+}
+
+llvm::Value *Generator::generateConditional(AST::Conditional *conditional)
+{
+    llvm::Value *conditionValue = generateBool(conditional->getCondition());
+
+    llvm::Function *fn = builder->GetInsertBlock()->getParent();
+
+    llvm::BasicBlock *thenBlock =
+        llvm::BasicBlock::Create(*context, "then", fn);
+    llvm::BasicBlock *elseBlock =
+        llvm::BasicBlock::Create(*context, "else");
+    llvm::BasicBlock *mergeBlock =
+        llvm::BasicBlock::Create(*context, "merge");
+
+    builder->CreateCondBr(conditionValue, thenBlock, elseBlock);
+
+    builder->SetInsertPoint(thenBlock);
+    llvm::Value *thenValue = generate(conditional->getConsequent());
+    builder->CreateBr(mergeBlock);
+    thenBlock = builder->GetInsertBlock();
+
+    fn->getBasicBlockList().push_back(elseBlock);
+    builder->SetInsertPoint(elseBlock);
+    llvm::Value *elseValue = generate(conditional->getAlternative());
+    builder->CreateBr(mergeBlock);
+    elseBlock = builder->GetInsertBlock();
+
+    fn->getBasicBlockList().push_back(mergeBlock);
+    builder->SetInsertPoint(mergeBlock);
+    llvm::PHINode *phi = builder->CreatePHI(
+        llvm::Type::getDoubleTy(*context),
+        2,
+        "iftmp"
+    );
+    phi->addIncoming(thenValue, thenBlock);
+    phi->addIncoming(elseValue, elseBlock);
+
+    return phi;
+}

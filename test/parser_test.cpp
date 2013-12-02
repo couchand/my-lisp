@@ -90,6 +90,18 @@ void testCall()
     }
 }
 
+void testConditional()
+{
+    std::stringstream input("if 1 then 42 else 41");
+    Parser *parser = buildParser(input);
+
+    AST::Expression *parsed = parser->parseExpression();
+    if (parsed == 0)
+    {
+        error("unable to parse expression");
+    }
+}
+
 void testDefine()
 {
     std::stringstream input("define addTwo(x) add(x 2)");
@@ -109,5 +121,6 @@ void testParser()
     testDecimal();
     testIdentifier();
     testCall();
+    testConditional();
     testDefine();
 }

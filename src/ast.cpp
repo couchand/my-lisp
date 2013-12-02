@@ -52,6 +52,11 @@ llvm::Value *Call::generate(Generator *generator)
     return generator->getBuilder()->CreateCall(fn, argv, "calltmp");
 }
 
+llvm::Value *Conditional::generate(Generator *generator)
+{
+    return generator->generateConditional(this);
+}
+
 llvm::Function *Function::generate(Generator *generator)
 {
     llvm::Function *fn = generator->buildFunction(name, parameters.size());

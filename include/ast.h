@@ -54,6 +54,20 @@ namespace AST
         virtual llvm::Value *generate(Generator *generator);
     };
 
+    class Conditional : public Expression
+    {
+        AST::Expression *condition;
+        AST::Expression *consequent;
+        AST::Expression *alternative;
+      public:
+        Conditional(AST::Expression *_condition, AST::Expression *_consequent, AST::Expression *_alternative) : condition(_condition), consequent(_consequent), alternative(_alternative) {}
+
+        AST::Expression *getCondition() { return condition; }
+        AST::Expression *getConsequent() { return consequent; }
+        AST::Expression *getAlternative() { return alternative; }
+        virtual llvm::Value *generate(Generator *generator);
+    };
+
     class Function : public Tree
     {
         std::string name;

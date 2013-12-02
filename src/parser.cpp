@@ -33,6 +33,28 @@ AST::Expression *Parser::parseIdentifier()
     return new AST::Call(name, arguments);
 }
 
+AST::Expression *Parser::parseConditional()
+{
+    getNextToken();
+
+    AST::Expression *condition = parseExpression();
+    if (!condition) throw "expected condition";
+
+    if (currentToken != token_then) throw "expected then";
+    getNextToken();
+
+    AST::Expression *consequent = parseExpression();
+    if (!consequent) throw "expected consequent";
+
+    if (currentToken != token_else) throw "expected else";
+    getNextToken();
+
+    AST::Expression *alternative = parseExpression();
+    if (!alternative) throw "expected alternative";
+
+    return new AST::Conditional(condition, consequent, alternative);
+}
+
 AST::Function *Parser::parseDefine()
 {
     if (getNextToken() != token_identifier) throw "expected identifier";
@@ -65,6 +87,8 @@ AST::Expression *Parser::parsePrimary()
         return parseNumber();
       case token_identifier:
         return parseIdentifier();
+      case token_if:
+        return parseConditional();
     }
 }
 

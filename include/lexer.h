@@ -12,7 +12,10 @@ enum Token
     token_eof = -1,
     token_identifier = -2,
     token_number = -3,
-    token_define = -4
+    token_define = -4,
+    token_if = -5,
+    token_then = -6,
+    token_else = -7
 };
 
 class Lexer

@@ -16,6 +16,9 @@ int Lexer::getToken()
         while (isalnum(lastChar = input.get())) identifierStr += lastChar;
 
         if (identifierStr == "define") return token_define;
+        if (identifierStr == "if") return token_if;
+        if (identifierStr == "then") return token_then;
+        if (identifierStr == "else") return token_else;
 
         return token_identifier;
     }

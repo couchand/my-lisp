@@ -49,6 +49,8 @@ class Generator
 
     llvm::ConstantFP *getConstant(double val);
     llvm::GlobalVariable *generateGlobal(std::string name, double val);
+    llvm::Value *generateBool(AST::Expression *expression);
+    llvm::Value *generateConditional(AST::Conditional *conditional);
 
     void addGlobal(std::string name, double val);
     void addValue(std::string name, llvm::Value *val);
