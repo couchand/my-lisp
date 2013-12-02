@@ -68,7 +68,7 @@ llvm::Function *Generator::buildFunction(std::string name, unsigned parameters)
 llvm::Function *Generator::lookupFn(std::string name)
 {
     llvm::Function *fn = module->getFunction(name);
-    if (fn == 0) throw "not found";
+    if (fn == 0) throw (name + " not found").c_str();
     return fn;
 }
 

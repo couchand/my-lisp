@@ -69,21 +69,6 @@ define printd(d)
 define newline()
   print(10)
 
-printd(0)
-printd(1)
-printd(2)
-printd(3)
-printd(4)
-printd(5)
-printd(6)
-printd(7)
-printd(8)
-printd(9)
-printd(0)
-
-newline()
-newline()
-
 define do(a b)
   b
 
@@ -114,4 +99,4 @@ define mandle(xmin xmax width ymin ymax height)
     xmin xmax quo(sub(xmax xmin) width)
   )
 
-mandle(0.25 0.5 78 0.5 0.75 40)
+mandle(0.25 0.5 78 0.5 0.75 36)

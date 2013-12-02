@@ -38,7 +38,6 @@ class Generator
         buildFunction("pow", 2);
         buildFunction("print", 1);
         buildFunction("lt", 2);
-        addGlobal("nil", 0);
     }
 
     Builder *getBuilder() { return builder; }
