@@ -21,6 +21,13 @@ void testEOF()
     assertEOF(lex->getToken());
 }
 
+void testComment()
+{
+    std::stringstream input("# foobar\n\n");
+    Lexer *lexer = buildLexer(input);
+    assertEOF(lexer->getToken());
+}
+
 void testInteger()
 {
     std::stringstream input("42");
@@ -125,6 +132,7 @@ void testWhitespace()
 void testLexer()
 {
     testEOF();
+    testComment();
     testInteger();
     testDecimal();
     testNegative();

@@ -10,6 +10,15 @@ int Lexer::getToken()
 
     if (input.eof()) return token_eof;
 
+    if (lastChar == '#')
+    {
+        while (lastChar != '\n')
+        {
+            lastChar = input.get();
+        }
+        return getToken();
+    }
+
     if (isalpha(lastChar))
     {
         identifierStr = lastChar;
