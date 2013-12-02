@@ -23,20 +23,14 @@ namespace AST
 
 llvm::Value *NumberLiteral::generate(Generator *generator)
 {
-    return llvm::ConstantFP::get(
-        generator->getBuilder()->getContext(),
-        llvm::APFloat(val)
-    );
+    return generator->getConstant(val);
 }
 
 llvm::Value *Identifier::generate(Generator *generator)
 {
-/*
-    Value *value = generator->lookupFn(name);
+    llvm::Value *value = generator->lookupVal(name);
     if (!value) throw "unknown name";
     return value;
-*/
-    return 0;
 }
 
 llvm::Value *Call::generate(Generator *generator)
@@ -56,6 +50,22 @@ llvm::Value *Call::generate(Generator *generator)
     }
 
     return generator->getBuilder()->CreateCall(fn, argv, "calltmp");
+}
+
+llvm::Function *Function::generate(Generator *generator)
+{
+    llvm::Function *fn = generator->buildFunction(name, parameters.size());
+
+    if (fn->getName() != name)
+    {
+        throw "no redefs for now";
+    }
+
+    generator->addParametersToScope(fn, parameters);
+    generator->generateBody(fn, body);
+    generator->verifyFunction(fn);
+
+    return fn;
 }
 
 }

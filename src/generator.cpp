@@ -5,18 +5,45 @@
 
 #include "llvm/Analysis/Verifier.h"
 
+llvm::ConstantFP *Generator::getConstant(double val)
+{
+    return llvm::ConstantFP::get(*context, llvm::APFloat(val));
+}
+
 llvm::Function *Generator::expressionToFunction(AST::Expression *expression)
 {
     llvm::Function *fn = buildFunction("", 0);
+    generateBody(fn, expression);
+    verifyFunction(fn);
 
+    return fn;
+}
+
+void Generator::addParametersToScope(llvm::Function *fn, std::vector<std::string> parameters)
+{
+    llvm::Function::arg_iterator argIt = fn->arg_begin();
+    for (
+        unsigned i = 0;
+        i != parameters.size();
+        ++argIt, ++i
+    ){
+        argIt->setName(parameters[i]);
+        addValue(parameters[i], argIt);
+    }
+}
+
+void Generator::generateBody(llvm::Function *fn, AST::Expression *body)
+{
     llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", fn);
     builder->SetInsertPoint(block);
 
-    llvm::Value *value = generate(expression);
+    llvm::Value *value = generate(body);
     builder->CreateRet(value);
+}
 
+void Generator::verifyFunction(llvm::Function *fn)
+{
     llvm::verifyFunction(*fn);
-    return fn;
 }
 
 llvm::Function *Generator::buildFunction(std::string name, unsigned parameters)
@@ -43,6 +70,34 @@ llvm::Function *Generator::lookupFn(std::string name)
     llvm::Function *fn = module->getFunction(name);
     if (fn == 0) throw "not found";
     return fn;
+}
+
+void Generator::addGlobal(std::string name, double val)
+{
+    addValue(name, generateGlobal(name, val));
+}
+
+llvm::GlobalVariable *Generator::generateGlobal(std::string name, double val)
+{
+    return new llvm::GlobalVariable(
+        *module,
+        llvm::Type::getDoubleTy(*context),
+        true,
+        llvm::GlobalValue::CommonLinkage,
+        getConstant(val)
+    );
+}
+
+void Generator::addValue(std::string name, llvm::Value *val)
+{
+    scope[name] = val;
+}
+
+llvm::Value *Generator::lookupVal(std::string name)
+{
+    llvm::Value *value = scope[name];
+    if (!value) throw "unknown value";
+    return value;
 }
 
 llvm::Value *Generator::generate(AST::Expression *expression)

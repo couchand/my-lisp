@@ -45,5 +45,5 @@ Parser *buildParser(std::stringstream &input)
 AST::Expression *parse(std::stringstream &input)
 {
     Parser *parser = buildParser(input);
-    return parser->parse();
+    return parser->parseExpression();
 }

@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     }
     catch (const char* ex)
     {
-        std::cout << "Exception: " << ex << std::endl;
+        std::cout << "Lexer Exception: " << ex << std::endl;
     }
     try
     {
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     }
     catch (const char* ex)
     {
-        std::cout << "Exception: " << ex << std::endl;
+        std::cout << "Parser Exception: " << ex << std::endl;
     }
     try
     {
@@ -30,6 +30,6 @@ int main(int argc, char** argv)
     }
     catch (const char* ex)
     {
-        std::cout << "Exception: " << ex << std::endl;
+        std::cout << "Generator Exception: " << ex << std::endl;
     }
 }

@@ -11,7 +11,8 @@ enum Token
 {
     token_eof = -1,
     token_identifier = -2,
-    token_number = -3
+    token_number = -3,
+    token_define = -4
 };
 
 class Lexer

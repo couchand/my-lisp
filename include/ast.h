@@ -10,7 +10,14 @@
 
 namespace AST
 {
-    class Expression
+
+    class Tree
+    {
+      public:
+        virtual ~Tree() {}
+    };
+
+    class Expression : public Tree
     {
       public:
         virtual ~Expression() {}
@@ -45,6 +52,16 @@ namespace AST
         Call(const std::string &_name, const std::vector<AST::Expression*> &_arguments) : name(_name), arguments(_arguments) {}
 
         virtual llvm::Value *generate(Generator *generator);
+    };
+
+    class Function : public Tree
+    {
+        std::string name;
+        std::vector<std::string> parameters;
+        AST::Expression *body;
+      public:
+        Function(const std::string &_name, const std::vector<std::string> &_parameters, AST::Expression *_body) : name(_name), parameters(_parameters), body(_body) {}
+        llvm::Function *generate(Generator *generator);
     };
 }
 

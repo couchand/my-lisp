@@ -13,7 +13,7 @@ void testInteger()
     std::stringstream input("42");
     Parser *par = buildParser(input);
 
-    AST::Expression *parsed = par->parse();
+    AST::Expression *parsed = par->parseExpression();
     if (parsed == 0)
     {
         error("unable to parse expression");
@@ -36,7 +36,7 @@ void testDecimal()
     std::stringstream input("3.141592653589793238");
     Parser *par = buildParser(input);
 
-    AST::Expression *parsed = par->parse();
+    AST::Expression *parsed = par->parseExpression();
     if (parsed == 0)
     {
         error("unable to parse expression");
@@ -59,7 +59,7 @@ void testIdentifier()
     std::stringstream input("foobar");
     Parser *par = buildParser(input);
 
-    AST::Expression *parsed = par->parse();
+    AST::Expression *parsed = par->parseExpression();
     if (parsed == 0)
     {
         error("unable to parse expression");
@@ -80,10 +80,22 @@ void testIdentifier()
 
 void testCall()
 {
-    std::stringstream input("cons(foo bar)");
+    std::stringstream input("add(foo bar)");
     Parser *par = buildParser(input);
 
-    AST::Expression *parsed = par->parse();
+    AST::Expression *parsed = par->parseExpression();
+    if (parsed == 0)
+    {
+        error("unable to parse expression");
+    }
+}
+
+void testDefine()
+{
+    std::stringstream input("define addTwo(x) add(x 2)");
+    Parser *par = buildParser(input);
+
+    AST::Tree *parsed = par->parse();
     if (parsed == 0)
     {
         error("unable to parse expression");
@@ -97,4 +109,5 @@ void testParser()
     testDecimal();
     testIdentifier();
     testCall();
+    testDefine();
 }

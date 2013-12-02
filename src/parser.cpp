@@ -13,9 +13,9 @@ AST::Expression *Parser::parseNumber()
 
 AST::Expression *Parser::parseIdentifier()
 {
-    const char* name = lexer->getLastIdentifier();
-
+    std::string name = lexer->getLastIdentifier();
     getNextToken();
+
     if (currentToken != '(')
     {
         return new AST::Identifier(name);
@@ -25,12 +25,33 @@ AST::Expression *Parser::parseIdentifier()
     std::vector<AST::Expression*> arguments;
     while (currentToken != ')')
     {
-        AST::Expression *argument = parse();
+        AST::Expression *argument = parsePrimary();
         arguments.push_back(argument);
     }
     getNextToken();
 
     return new AST::Call(name, arguments);
+}
+
+AST::Function *Parser::parseDefine()
+{
+    if (getNextToken() != token_identifier) throw "expected identifier";
+    std::string name = lexer->getLastIdentifier();
+    getNextToken();
+
+    if (currentToken != '(') throw "expected parameters";
+
+    std::vector<std::string> parameters;
+    while (getNextToken() != ')')
+    {
+        if (currentToken != token_identifier) throw "expecting identifier";
+        parameters.push_back(lexer->getLastIdentifier());
+    }
+    getNextToken();
+
+    AST::Expression *body = parsePrimary();
+
+    return new AST::Function(name, parameters, body);
 }
 
 AST::Expression *Parser::parsePrimary()
@@ -47,7 +68,20 @@ AST::Expression *Parser::parsePrimary()
     }
 }
 
-AST::Expression *Parser::parse()
+AST::Expression *Parser::parseExpression()
 {
     return parsePrimary();
+}
+
+AST::Tree *Parser::parse()
+{
+    switch (currentToken)
+    {
+      default:
+        return parsePrimary();
+      case token_eof:
+        return 0;
+      case token_define:
+        return parseDefine();
+    }
 }

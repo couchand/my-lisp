@@ -20,13 +20,16 @@ class Parser
     AST::Expression *parseIdentifier();
     AST::Expression *parsePrimary();
 
+    AST::Function *parseDefine();
+
   public:
     Parser(Lexer *_lexer) : lexer(_lexer)
     {
         getNextToken();
     }
 
-    AST::Expression *parse();
+    AST::Tree *parse();
+    AST::Expression *parseExpression();
 };
 
 #endif

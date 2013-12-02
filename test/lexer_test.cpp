@@ -55,6 +55,16 @@ void testIdentifier()
     assertEOF(lex->getToken());
 }
 
+void testDefine()
+{
+    std::stringstream input("define");
+    Lexer *lex = buildLexer(input);
+
+    int nextToken = lex->getToken();
+    assertEquals(token_define, nextToken, "define expected");
+    assertEOF(lex->getToken());
+}
+
 void testMultiple()
 {
     std::stringstream input("i am a very model of 4 1337 general )");
@@ -96,6 +106,7 @@ void testLexer()
     testInteger();
     testDecimal();
     testIdentifier();
+    testDefine();
     testMultiple();
     testWhitespace();
 }
