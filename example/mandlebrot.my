@@ -1,3 +1,7 @@
+# a mandlebrot graph
+
+# first some helper functions
+
 define not(x)
   if x then
     0
@@ -30,6 +34,8 @@ define gte(l r)
 define eq(l r)
   not(or(lt(l r) gt(l r)))
 
+# calculate the convergence recursively
+
 define mandleconverger(r i it cr ci)
   if or(
     gt(it 255)
@@ -56,6 +62,8 @@ define mandleconverger(r i it cr ci)
 define mandleconverge(r i)
   mandleconverger(r i 0 r i)
 
+# plot bands
+
 define printd(d)
   if gt(d 32) then
     print(32)
@@ -74,6 +82,8 @@ define newline()
 define do(a b)
   b
 
+# recursively plot one row
+
 define mandlerow(row col max step)
   if gte(col max) then
     row
@@ -82,6 +92,8 @@ define mandlerow(row col max step)
       printd(mandleconverge(col row))
       mandlerow(row add(col step) max step)
     )
+
+# recursively plot graph
 
 define mandlehelp(row rowmax rowstep colmin colmax colstep)
   if gte(row rowmax) then
@@ -95,10 +107,14 @@ define mandlehelp(row rowmax rowstep colmin colmax colstep)
       )
     )
 
+# api
+
 define mandle(xmin xmax width ymin ymax height)
   mandlehelp(
     ymin ymax quo(sub(ymax ymin) height)
     xmin xmax quo(sub(xmax xmin) width)
   )
+
+# give it a whirl
 
 mandle(-2 0.5 78 -1 1 36)

@@ -1,7 +1,9 @@
+# a fibonacci calculation
 define fib(x)
   if lt(x 3) then
     1
   else
     add(fib(sub(x 1)) fib(sub(x 2)))
 
+# try it out, should be 55
 fib(10)
