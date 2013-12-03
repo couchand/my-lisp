@@ -14,10 +14,23 @@
 #include "parser.h"
 #include "generator.h"
 
+enum
+{
+    mode_execute = -1,
+    mode_compile = -2
+};
+
+int mode = mode_execute;
+
 Generator *generator;
 
 int main(int argc, char **argv)
 {
+    for (int i = 1; i < argc; ++i)
+    {
+        if (0 == strncmp("-c", argv[i], 2)) mode = mode_compile;
+    }
+
 try
 {
     double result;
@@ -45,6 +58,8 @@ try
     passManager->add(llvm::createCFGSimplificationPass());
 
     passManager->doInitialization();
+
+    std::vector<llvm::Function*> statements;
 
     while (1)
     {
@@ -93,10 +108,28 @@ try
         }
 
         double (*fn)() = (double (*)())(intptr_t)fnPtr;
-        result = fn();
+
+        if (expression != 0)
+        {
+            switch (mode)
+            {
+              case mode_execute:
+                result = fn(); break;
+              case mode_compile:
+                statements.push_back(fnTree); break;
+            }
+        }
     }
 
-    std::cout << "Evaluates to " << result << std::endl;
+    if (mode == mode_execute)
+    {
+        std::cout << "Evaluates to " << result << std::endl;
+    }
+    if (mode == mode_compile)
+    {
+        generator->generateMain(statements);
+        generator->getModule()->dump();
+    }
     return 0;
 }
 catch (const char* err)

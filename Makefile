@@ -31,7 +31,7 @@ $(OBJ_DIR)/test_%.o: $(TEST_DIR)/test_%.cpp
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $< 
 
-benchmark: benchmark/liebniz-recursive benchmark/liebniz-iterative
+benchmark: benchmark/liebniz-recursive benchmark/liebniz-iterative benchmark/liebniz-my
 
 benchmark/liebniz-recursive: benchmark/liebniz-recursive.o obj/builtins.o
 	$(CC) $(CFLAGS) $(OFLAGS) -o $@ $^ $(LDLIBS)
@@ -44,6 +44,18 @@ benchmark/liebniz-iterative: benchmark/liebniz-iterative.o obj/builtins.o
 
 benchmark/liebniz-iterative.o: benchmark/liebniz-iterative.cpp
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c -o $@ $<
+
+benchmark/liebniz-my: benchmark/liebniz-my.o obj/builtins.o
+	$(CC) $(CFLAGS) $(OFLAGS) -o $@ $^ $(LDLIBS)
+
+benchmark/liebniz-my.o: benchmark/liebniz-my.bc
+	llc -filetype=obj $<
+
+benchmark/liebniz-my.bc: benchmark/liebniz-my.ll
+	llvm-as $<
+
+benchmark/liebniz-my.ll: benchmark/liebniz.my
+	./my-lisp -c < $< 2> $@
 
 LINT := cppcheck
 LINTFLAGS := -q --enable=all --check-config -I$(INC_DIR) -I`llvm-config --includedir`

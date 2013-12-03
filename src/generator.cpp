@@ -19,6 +19,31 @@ llvm::Function *Generator::expressionToFunction(AST::Expression *expression)
     return fn;
 }
 
+llvm::Function *Generator::generateMain(std::vector<llvm::Function*> statements)
+{
+    std::vector<llvm::Type*> none;
+    std::vector<llvm::Value*> empty;
+    llvm::Function *main = llvm::Function::Create(
+        llvm::FunctionType::get(llvm::Type::getVoidTy(*context), none, false),
+        llvm::Function::ExternalLinkage,
+        "main",
+        module
+    );
+
+    llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", main);
+    builder->SetInsertPoint(block);
+
+    for (std::vector<llvm::Function*>::iterator i = statements.begin(); i != statements.end(); ++i)
+    {
+        builder->CreateCall(*i, empty, "calltmp");
+    }
+
+    builder->CreateRetVoid();
+    verifyFunction(main);
+
+    return main;
+}
+
 void Generator::addParametersToScope(llvm::Function *fn, std::vector<std::string> parameters)
 {
     llvm::Function::arg_iterator argIt = fn->arg_begin();
