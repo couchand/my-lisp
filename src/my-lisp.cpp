@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 
 try
 {
-    double result;
+    double result = -1;
     Lexer lexer(std::cin);
     Parser parser(&lexer);
     generator = new Generator();
@@ -64,7 +64,7 @@ try
     while (1)
     {
         AST::Tree *tree = parser.parse();
-        if (tree == 0) break;
+        if (tree == 0) break; // EOF
 
         AST::Expression *expression = dynamic_cast<AST::Expression*>(tree);
         llvm::Function *fnTree;

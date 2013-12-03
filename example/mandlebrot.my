@@ -57,14 +57,16 @@ define mandleconverge(r i)
   mandleconverger(r i 0 r i)
 
 define printd(d)
-  if gt(d 8) then
+  if gt(d 32) then
     print(32)
-  else if gt(d 4) then
+  else if gt(d 16) then
     print(43)
-  else if gt(d 2) then
+  else if gt(d 8) then
     print(46)
-  else
+  else if gt(d 4) then
     print(42)
+  else
+    print(32)
 
 define newline()
   print(10)
@@ -99,4 +101,4 @@ define mandle(xmin xmax width ymin ymax height)
     xmin xmax quo(sub(xmax xmin) width)
   )
 
-mandle(0.25 0.5 78 0.5 0.75 36)
+mandle(-2 0.5 78 -1 1 36)

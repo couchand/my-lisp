@@ -2,5 +2,8 @@ obj
 my-lisp
 test/test
 benchmark/*.o
+benchmark/*.ll
+benchmark/*.bc
 benchmark/liebniz-recursive
 benchmark/liebniz-iterative
+benchmark/liebniz-my
