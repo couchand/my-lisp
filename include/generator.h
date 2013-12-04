@@ -49,12 +49,16 @@ class Generator
 
     void addParametersToScope(llvm::Function *fn, std::vector<std::string> parameters);
     void generateBody(llvm::Function *fn, AST::Expression *body);
+    void generateBody(llvm::Function *fn, llvm::BasicBlock *block, AST::Expression *body);
     void verifyFunction(llvm::Function *fn);
 
     llvm::ConstantFP *getConstant(double val);
     llvm::GlobalVariable *generateGlobal(std::string name, double val);
     llvm::Value *generateBool(AST::Expression *expression);
     llvm::Value *generateConditional(AST::Conditional *conditional);
+    llvm::AllocaInst *createEntryBlockAlloca(llvm::Function *fn, std::string name);
+    llvm::BasicBlock *createEntryBlock(llvm::Function *fn);
+    llvm::Value *generateLoad(std::string name, llvm::Value *alloca);
 
     void addGlobal(std::string name, double val);
     void addValue(std::string name, llvm::Value *val);

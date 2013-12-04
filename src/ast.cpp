@@ -30,7 +30,7 @@ llvm::Value *Identifier::generate(Generator *generator)
 {
     llvm::Value *value = generator->lookupVal(name);
     if (!value) throw "unknown name";
-    return value;
+    return generator->generateLoad(name, value);
 }
 
 llvm::Value *Call::generate(Generator *generator)
@@ -71,8 +71,9 @@ llvm::Function *Function::generate(Generator *generator)
         throw "no redefs for now";
     }
 
+    llvm::BasicBlock *entry = generator->createEntryBlock(fn);
     generator->addParametersToScope(fn, parameters);
-    generator->generateBody(fn, body);
+    generator->generateBody(fn, entry, body);
     generator->verifyFunction(fn);
 
     return fn;

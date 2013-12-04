@@ -53,15 +53,41 @@ void Generator::addParametersToScope(llvm::Function *fn, std::vector<std::string
         ++argIt, ++i
     ){
         argIt->setName(parameters[i]);
-        addValue(parameters[i], argIt);
+        llvm::AllocaInst *alloca = createEntryBlockAlloca(fn, parameters[i]);
+        builder->CreateStore(argIt, alloca);
+        addValue(parameters[i], alloca);
     }
+}
+
+llvm::AllocaInst *Generator::createEntryBlockAlloca(llvm::Function *fn, std::string name)
+{
+    Builder entryBuilder(&fn->getEntryBlock(), fn->getEntryBlock().begin());
+    return entryBuilder.CreateAlloca(
+        llvm::Type::getDoubleTy(*context),
+        0,
+        name.c_str()
+    );
+}
+
+llvm::Value *Generator::generateLoad(std::string name, llvm::Value *alloca)
+{
+    return builder->CreateLoad(alloca, name.c_str());
+}
+
+llvm::BasicBlock *Generator::createEntryBlock(llvm::Function *fn)
+{
+    llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", fn);
+    builder->SetInsertPoint(block);
+    return block;
 }
 
 void Generator::generateBody(llvm::Function *fn, AST::Expression *body)
 {
-    llvm::BasicBlock *block = llvm::BasicBlock::Create(*context, "entry", fn);
-    builder->SetInsertPoint(block);
+    generateBody(fn, createEntryBlock(fn), body);
+}
 
+void Generator::generateBody(llvm::Function *fn, llvm::BasicBlock *block, AST::Expression *body)
+{
     llvm::Value *value = generate(body);
     builder->CreateRet(value);
 }
@@ -95,22 +121,6 @@ llvm::Function *Generator::lookupFn(std::string name)
     llvm::Function *fn = module->getFunction(name);
     if (fn == 0) throw (name + " not found").c_str();
     return fn;
-}
-
-void Generator::addGlobal(std::string name, double val)
-{
-    addValue(name, generateGlobal(name, val));
-}
-
-llvm::GlobalVariable *Generator::generateGlobal(std::string name, double val)
-{
-    return new llvm::GlobalVariable(
-        *module,
-        llvm::Type::getDoubleTy(*context),
-        true,
-        llvm::GlobalValue::CommonLinkage,
-        getConstant(val)
-    );
 }
 
 void Generator::addValue(std::string name, llvm::Value *val)
