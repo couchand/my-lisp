@@ -105,8 +105,14 @@ llvm::Function *Function::generate(Generator *generator)
         throw "no redefs for now";
     }
 
+    std::vector<std::string> parameterNames;
+    for (unsigned i = 0; i < parameters.size(); ++i)
+    {
+        parameterNames.push_back(parameters[i].first);
+    }
+
     llvm::BasicBlock *entry = generator->createEntryBlock(fn);
-    generator->addParametersToScope(fn, parameters);
+    generator->addParametersToScope(fn, parameterNames);
     generator->generateBody(fn, entry, body);
     generator->verifyFunction(fn);
 

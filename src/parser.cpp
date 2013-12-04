@@ -92,12 +92,23 @@ AST::Function *Parser::parseDefine()
     getNextToken();
 
     if (currentToken != '(') throw "expected parameters";
+    getNextToken();
 
-    std::vector<std::string> parameters;
-    while (getNextToken() != ')')
+    std::vector< std::pair<std::string, std::string> > parameters;
+    while (currentToken != ')')
     {
-        if (currentToken != token_identifier) throw "expecting identifier";
-        parameters.push_back(lexer->getLastIdentifier());
+        if (currentToken != token_identifier) throw "expecting identifier for parameter";
+
+        std::pair<std::string, std::string> parameter(lexer->getLastIdentifier(), "");
+
+        getNextToken();
+        if (currentToken == ':')
+        {
+            if (getNextToken() != token_identifier) throw "expected identifier for predicate";
+            parameter.second = lexer->getLastIdentifier();
+        }
+
+        parameters.push_back(parameter);
     }
     getNextToken();
 

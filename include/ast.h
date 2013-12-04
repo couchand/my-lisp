@@ -83,10 +83,10 @@ namespace AST
     class Function : public Tree
     {
         std::string name;
-        std::vector<std::string> parameters;
+        std::vector< std::pair<std::string, std::string> > parameters;
         AST::Expression *body;
       public:
-        Function(const std::string &_name, const std::vector<std::string> &_parameters, AST::Expression *_body) : name(_name), parameters(_parameters), body(_body) {}
+        Function(const std::string &_name, const std::vector< std::pair<std::string, std::string> > &_parameters, AST::Expression *_body) : name(_name), parameters(_parameters), body(_body) {}
         llvm::Function *generate(Generator *generator);
     };
 }

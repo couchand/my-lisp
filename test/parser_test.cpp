@@ -125,6 +125,30 @@ void testDefine()
         error("unable to parse expression");
     }
 }
+
+void testDefineSeveral()
+{
+    std::stringstream input("define mangle(x y) mul(sub(y mul(2 x)) add(x 2))");
+    Parser *par = buildParser(input);
+
+    AST::Tree *parsed = par->parse();
+    if (parsed == 0)
+    {
+        error("unable to parse expression");
+    }
+}
+
+void testDefinePredicate()
+{
+    std::stringstream input("define invert(x:notZero) quo(1 x)");
+    Parser *par = buildParser(input);
+
+    AST::Tree *parsed = par->parse();
+    if (parsed == 0)
+    {
+        error("unable to parse expression");
+    }
+}
 }
 
 void testParser()
@@ -136,4 +160,6 @@ void testParser()
     testConditional();
     testLet();
     testDefine();
+    testDefineSeveral();
+    testDefinePredicate();
 }
