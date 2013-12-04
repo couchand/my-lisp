@@ -16,6 +16,9 @@ extern "C"
 double quo(double l, double r);
 
 extern "C"
+double root(double x);
+
+extern "C"
 double print(double c);
 
 extern "C"

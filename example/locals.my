@@ -1,0 +1,28 @@
+# local variables
+
+define recursive(x y)
+    let
+        x = sub(y 2)
+        y = sub(x 1)
+    in
+        let
+            x = sub(y 1)
+            y = sub(x 2)
+        in
+            let
+                x = sub(y 2)
+                y = sub(x 1)
+            in
+                mul(x y)
+
+# should be two
+recursive(4 8)
+
+define distance(ax ay bx by)
+    let
+        dx = sub(ax bx)
+        dy = sub(ay by)
+    in
+        root(add(mul(dx dx) mul(dy dy)))
+
+distance(0 1 1 0)

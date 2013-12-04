@@ -35,6 +35,7 @@ class Generator
         buildFunction("mul", 2);
         buildFunction("quo", 2);
         buildFunction("pow", 2);
+        buildFunction("root", 1);
         buildFunction("print", 1);
         buildFunction("lt", 2);
     }
