@@ -212,34 +212,49 @@ llvm::Value *Generator::generateMultiConditional(std::vector< std::pair<generate
 {
     if (cases.empty()) return fallthrough();
 
-    for (unsigned i = 0; i < cases.size() - 1; ++i)
-    {
-        throw "no multi yet";
-    }
+    std::vector<llvm::Value*> results;
+    std::vector<llvm::BasicBlock*> blocks;
 
-    llvm::Value *conditionValue = cases[cases.size() - 1].first();
+    llvm::Value *conditionValue = cases[0].first();
 
     llvm::Function *fn = builder->GetInsertBlock()->getParent();
 
     llvm::BasicBlock *thenBlock =
         llvm::BasicBlock::Create(*context, "then", fn);
+    blocks.push_back(thenBlock);
+
+    for (unsigned i = 1; i < cases.size(); ++i)
+    {
+        throw "no multi yet";
+    }
+
     llvm::BasicBlock *elseBlock =
         llvm::BasicBlock::Create(*context, "else");
+    blocks.push_back(elseBlock);
+
     llvm::BasicBlock *mergeBlock =
         llvm::BasicBlock::Create(*context, "merge");
 
+    // this will be fun
     builder->CreateCondBr(conditionValue, thenBlock, elseBlock);
 
     builder->SetInsertPoint(thenBlock);
-    llvm::Value *thenValue = cases[cases.size() - 1].second();
+    llvm::Value *thenValue = cases[0].second();
     builder->CreateBr(mergeBlock);
-    thenBlock = builder->GetInsertBlock();
+    blocks[0] = thenBlock = builder->GetInsertBlock();
+    results.push_back(thenValue);
+
+    for (unsigned i = 1; i < cases.size(); ++i)
+    {
+        throw "no multi yet";
+    }
 
     fn->getBasicBlockList().push_back(elseBlock);
     builder->SetInsertPoint(elseBlock);
     llvm::Value *elseValue = fallthrough();
     builder->CreateBr(mergeBlock);
-    elseBlock = builder->GetInsertBlock();
+    blocks[1] = elseBlock = builder->GetInsertBlock();
+    results.push_back(elseValue);
 
     fn->getBasicBlockList().push_back(mergeBlock);
     builder->SetInsertPoint(mergeBlock);
@@ -248,8 +263,11 @@ llvm::Value *Generator::generateMultiConditional(std::vector< std::pair<generate
         cases.size() + 1,
         "iftmp"
     );
-    phi->addIncoming(thenValue, thenBlock);
-    phi->addIncoming(elseValue, elseBlock);
+
+    for (unsigned i = 0; i < results.size(); ++i)
+    {
+        phi->addIncoming(results[i], blocks[i]);
+    }
 
     return phi;
 }
