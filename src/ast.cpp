@@ -38,8 +38,8 @@ llvm::Value *Call::generate(Generator *generator)
     std::vector<llvm::Value*> argv;
     for (unsigned i = 0, e = arguments.size(); i != e; ++i)
     {
-        llvm::Value* parameter = arguments[i]->generate(generator);
-        if (parameter == 0) throw "unable to generator parameter";
+        llvm::Value* parameter = generator->generate(arguments[i]);
+        if (parameter == 0) throw "unable to generate parameter";
 
         argv.push_back(parameter);
     }
@@ -93,8 +93,6 @@ llvm::Value *Let::generate(Generator *generator)
 
 llvm::Function *Function::generate(Generator *generator)
 {
-    llvm::Function *fn = generator->buildFunction(name, parameters.size());
-
     if (fn->getName() != name)
     {
         throw "no redefs for now";
@@ -105,6 +103,8 @@ llvm::Function *Function::generate(Generator *generator)
     {
         parameterNames.push_back(parameters[i].first);
     }
+
+    llvm::Function *fn = generator->buildFunction(name, parameters.size());
 
     llvm::BasicBlock *entry = generator->createEntryBlock(fn);
     generator->addParametersToScope(fn, parameterNames);

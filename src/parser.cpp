@@ -87,7 +87,7 @@ AST::Expression *Parser::parseLet()
 
 AST::Function *Parser::parseDefine()
 {
-    if (getNextToken() != token_identifier) throw "expected identifier";
+    if (getNextToken() != token_identifier) throw "expected identifier for function name";
     std::string name = lexer->getLastIdentifier();
     getNextToken();
 
