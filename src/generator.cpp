@@ -44,6 +44,16 @@ llvm::Function *Generator::generateMain(std::vector<llvm::Function*> statements)
     return main;
 }
 
+llvm::Value *Generator::generateCall(std::string name, std::vector<llvm::Value*> arguments)
+{
+    llvm::Function *fn = lookupFn(name);
+    if (fn == 0) throw "unable to find function object";
+
+    if (fn->arg_size() != arguments.size()) throw "arity mismatch";
+
+    return builder->CreateCall(fn, arguments, "calltmp");
+}
+
 llvm::Function *Generator::getCurrentFunction()
 {
     return builder->GetInsertBlock()->getParent();

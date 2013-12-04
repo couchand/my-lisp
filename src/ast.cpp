@@ -35,11 +35,6 @@ llvm::Value *Identifier::generate(Generator *generator)
 
 llvm::Value *Call::generate(Generator *generator)
 {
-    llvm::Function *fn = generator->lookupFn(name);
-    if (fn == 0) throw "unable to find function object";
-
-    if (fn->arg_size() != arguments.size()) throw "arity mismatch";
-
     std::vector<llvm::Value*> argv;
     for (unsigned i = 0, e = arguments.size(); i != e; ++i)
     {
@@ -49,7 +44,7 @@ llvm::Value *Call::generate(Generator *generator)
         argv.push_back(parameter);
     }
 
-    return generator->getBuilder()->CreateCall(fn, argv, "calltmp");
+    return generator->generateCall(name, argv);
 }
 
 llvm::Value *Conditional::generate(Generator *generator)

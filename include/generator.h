@@ -48,6 +48,7 @@ class Generator
     llvm::Function *expressionToFunction(AST::Expression *expression);
     llvm::Function *generateMain(std::vector<llvm::Function*> statements);
     llvm::Function *getCurrentFunction();
+    llvm::Value *generateCall(std::string name, std::vector<llvm::Value*> arguments);
 
     void addParametersToScope(llvm::Function *fn, std::vector<std::string> parameters);
     void generateBody(llvm::Function *fn, AST::Expression *body);
