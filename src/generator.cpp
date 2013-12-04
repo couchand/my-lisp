@@ -213,48 +213,46 @@ llvm::Value *Generator::generateMultiConditional(std::vector< std::pair<generate
     if (cases.empty()) return fallthrough();
 
     std::vector<llvm::Value*> results;
-    std::vector<llvm::BasicBlock*> blocks;
-
-    llvm::Value *conditionValue = cases[0].first();
+    std::vector<llvm::BasicBlock*> caseBlocks;
+    std::vector<llvm::BasicBlock*> thenBlocks;
 
     llvm::Function *fn = builder->GetInsertBlock()->getParent();
 
-    llvm::BasicBlock *thenBlock =
-        llvm::BasicBlock::Create(*context, "then", fn);
-    blocks.push_back(thenBlock);
-
-    for (unsigned i = 1; i < cases.size(); ++i)
+    for (unsigned i = 0; i < cases.size(); ++i)
     {
-        throw "no multi yet";
+        caseBlocks.push_back(llvm::BasicBlock::Create(*context, "case"));
+        thenBlocks.push_back(llvm::BasicBlock::Create(*context, "then"));
     }
 
     llvm::BasicBlock *elseBlock =
         llvm::BasicBlock::Create(*context, "else");
-    blocks.push_back(elseBlock);
+    caseBlocks.push_back(elseBlock);
+    thenBlocks.push_back(elseBlock);
 
     llvm::BasicBlock *mergeBlock =
         llvm::BasicBlock::Create(*context, "merge");
 
-    // this will be fun
-    builder->CreateCondBr(conditionValue, thenBlock, elseBlock);
+    builder->CreateBr(caseBlocks[0]);
 
-    builder->SetInsertPoint(thenBlock);
-    llvm::Value *thenValue = cases[0].second();
-    builder->CreateBr(mergeBlock);
-    blocks[0] = thenBlock = builder->GetInsertBlock();
-    results.push_back(thenValue);
-
-    for (unsigned i = 1; i < cases.size(); ++i)
+    for (unsigned i = 0; i < cases.size(); ++i)
     {
-        throw "no multi yet";
+        fn->getBasicBlockList().push_back(caseBlocks[i]);
+        builder->SetInsertPoint(caseBlocks[i]);
+        llvm::Value *caseCondition = cases[i].first();
+        builder->CreateCondBr(caseCondition, thenBlocks[i], caseBlocks[i+1]);
+
+        fn->getBasicBlockList().push_back(thenBlocks[i]);
+        builder->SetInsertPoint(thenBlocks[i]);
+        results.push_back(cases[i].second());
+        builder->CreateBr(mergeBlock);
+        thenBlocks[i] = builder->GetInsertBlock();
     }
 
     fn->getBasicBlockList().push_back(elseBlock);
     builder->SetInsertPoint(elseBlock);
-    llvm::Value *elseValue = fallthrough();
+    results.push_back(fallthrough());
     builder->CreateBr(mergeBlock);
-    blocks[1] = elseBlock = builder->GetInsertBlock();
-    results.push_back(elseValue);
+    thenBlocks[cases.size()] = elseBlock = builder->GetInsertBlock();
 
     fn->getBasicBlockList().push_back(mergeBlock);
     builder->SetInsertPoint(mergeBlock);
@@ -266,7 +264,7 @@ llvm::Value *Generator::generateMultiConditional(std::vector< std::pair<generate
 
     for (unsigned i = 0; i < results.size(); ++i)
     {
-        phi->addIncoming(results[i], blocks[i]);
+        phi->addIncoming(results[i], thenBlocks[i]);
     }
 
     return phi;
