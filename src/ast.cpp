@@ -93,15 +93,12 @@ llvm::Value *Let::generate(Generator *generator)
 
 llvm::Function *Function::generate(Generator *generator)
 {
-    if (fn->getName() != name)
-    {
-        throw "no redefs for now";
-    }
-
     std::vector<std::string> parameterNames;
+    std::vector<std::string> parameterPredicates;
     for (unsigned i = 0; i < parameters.size(); ++i)
     {
         parameterNames.push_back(parameters[i].first);
+        parameterPredicates.push_back(parameters[i].second);
     }
 
     llvm::Function *fn = generator->buildFunction(name, parameters.size());
@@ -110,6 +107,8 @@ llvm::Function *Function::generate(Generator *generator)
     generator->addParametersToScope(fn, parameterNames);
     generator->generateBody(fn, entry, body);
     generator->verifyFunction(fn);
+
+    generator->generatePredicate(name, parameterNames, parameterPredicates);
 
     return fn;
 }

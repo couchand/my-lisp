@@ -44,6 +44,36 @@ llvm::Function *Generator::generateMain(std::vector<llvm::Function*> statements)
     return main;
 }
 
+llvm::Function *Generator::generatePredicate(std::string name, std::vector<std::string> parameters, std::vector<std::string> predicates)
+{
+    llvm::Function *pred = buildFunction(name + "$predicate", parameters.size());
+
+    createEntryBlock(pred);
+    addParametersToScope(pred, parameters);
+
+    llvm::Value* results = getConstant(1);
+    std::vector<llvm::Value*> argv;
+    for (unsigned i = 0, e = predicates.size(); i != e; ++i)
+    {
+        if (predicates[i].empty()) continue;
+
+        llvm::Value *value = lookupVal(parameters[i]);
+        if (!value) throw "something strange occurred";
+        llvm::Value* parameter = generateLoad(parameters[i], value);
+        if (parameter == 0) throw "unable to generate parameter load";
+
+        argv.clear();
+        argv.push_back(parameter);
+
+        results = builder->CreateAnd(results, generateCall(predicates[i], argv), "andtmp");
+    }
+    builder->CreateRet(results);
+
+    verifyFunction(pred);
+
+    return pred;
+}
+
 llvm::Value *Generator::generateCall(std::string name, std::vector<llvm::Value*> arguments)
 {
     llvm::Function *fn = lookupFn(name);

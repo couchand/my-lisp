@@ -47,6 +47,7 @@ class Generator
     llvm::Function *buildFunction(std::string name, unsigned parameters);
     llvm::Function *expressionToFunction(AST::Expression *expression);
     llvm::Function *generateMain(std::vector<llvm::Function*> statements);
+    llvm::Function *generatePredicate(std::string name, std::vector<std::string> parameters, std::vector<std::string> predicates);
     llvm::Function *getCurrentFunction();
     llvm::Value *generateCall(std::string name, std::vector<llvm::Value*> arguments);
 
