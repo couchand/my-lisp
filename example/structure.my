@@ -1,0 +1,10 @@
+structure Point
+    Number x
+    Number y
+
+define distanceTo(me:isPoint you:isPoint)
+    let
+        xd = sub(me/x you/x)
+        yd = sub(me/y you/y)
+    in
+        sqrt(add(mul(xd xd) mul(yd yd)))

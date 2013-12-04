@@ -1,0 +1,10 @@
+define apply(fn obj)
+  fn(obj)
+
+define curry(fn l)
+  define partial(r)
+    fn(l r)
+
+define addTwo curry(add 2)
+
+apply(addTwo 40)
