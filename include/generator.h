@@ -21,7 +21,6 @@ class Generator
     llvm::LLVMContext *context;
     llvm::Module *module;
     Builder *builder;
-    llvm::FunctionPassManager *passManager;
     std::map<std::string, llvm::Value*> scope;
 
   public:
