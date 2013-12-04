@@ -2,9 +2,22 @@ structure Point
     Number x
     Number y
 
+# implicit methods
+#   define isPoint(x)
+#       # structural equivalence
+#   define x(me:isPoint)
+#       me[0]
+#   define y(me:isPoint)
+#       me[1]
+
 define distanceTo(me:isPoint you:isPoint)
     let
-        xd = sub(me/x you/x)
-        yd = sub(me/y you/y)
+        xd = sub(me.x you.x)
+        yd = sub(me.y you.y)
     in
         sqrt(add(mul(xd xd) mul(yd yd)))
+
+# or
+# start.distanceTo(end)
+
+distanceTo(Point(1 0) Point(0 1))
