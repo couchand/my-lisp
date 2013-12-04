@@ -55,6 +55,32 @@ AST::Expression *Parser::parseConditional()
     return new AST::Conditional(condition, consequent, alternative);
 }
 
+AST::Expression *Parser::parseLet()
+{
+    getNextToken();
+
+    std::vector< std::pair<AST::Expression*, AST::Expression*> > assignments;
+    while (currentToken != token_in)
+    {
+        AST::Expression *name = parseIdentifier();
+        if (!name) throw "expected name";
+
+        if (currentToken != '=') throw "expected =";
+        getNextToken();
+
+        AST::Expression *assignment = parseExpression();
+        if (!assignment) throw "expected assignment expression";
+
+        assignments.push_back(std::pair<AST::Expression*, AST::Expression*>(name, assignment));
+    }
+    getNextToken();
+
+    AST::Expression *body = parseExpression();
+    if (!body) throw "expected body";
+
+    return new AST::Let(assignments, body);
+}
+
 AST::Function *Parser::parseDefine()
 {
     if (getNextToken() != token_identifier) throw "expected identifier";
@@ -89,6 +115,8 @@ AST::Expression *Parser::parsePrimary()
         return parseIdentifier();
       case token_if:
         return parseConditional();
+      case token_let:
+        return parseLet();
     }
 }
 

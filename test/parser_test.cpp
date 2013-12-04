@@ -102,6 +102,18 @@ void testConditional()
     }
 }
 
+void testLet()
+{
+    std::stringstream input("let x = 5 y = sqrt(5) in add(x y)");
+    Parser *parser = buildParser(input);
+
+    AST::Expression *parsed = parser->parseExpression();
+    if (parsed == 0)
+    {
+        error("unable to parse let expression");
+    }
+}
+
 void testDefine()
 {
     std::stringstream input("define addTwo(x) add(x 2)");
@@ -122,5 +134,6 @@ void testParser()
     testIdentifier();
     testCall();
     testConditional();
+    testLet();
     testDefine();
 }

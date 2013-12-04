@@ -28,6 +28,8 @@ int Lexer::getToken()
         if (identifierStr == "if") return token_if;
         if (identifierStr == "then") return token_then;
         if (identifierStr == "else") return token_else;
+        if (identifierStr == "let") return token_let;
+        if (identifierStr == "in") return token_in;
 
         return token_identifier;
     }

@@ -19,6 +19,7 @@ class Parser
     AST::Expression *parseNumber();
     AST::Expression *parseIdentifier();
     AST::Expression *parseConditional();
+    AST::Expression *parseLet();
     AST::Expression *parsePrimary();
 
     AST::Function *parseDefine();

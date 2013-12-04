@@ -15,7 +15,9 @@ enum Token
     token_define = -4,
     token_if = -5,
     token_then = -6,
-    token_else = -7
+    token_else = -7,
+    token_let = -8,
+    token_in = -9
 };
 
 class Lexer

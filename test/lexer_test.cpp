@@ -84,6 +84,16 @@ void testIfThenElse()
     assertEOF(lex->getToken());
 }
 
+void testLetIn()
+{
+    std::stringstream input("let in");
+    Lexer *lex = buildLexer(input);
+
+    assertEquals(token_let, lex->getToken(), "let expected");
+    assertEquals(token_in, lex->getToken(), "in expected");
+    assertEOF(lex->getToken());
+}
+
 void testDefine()
 {
     std::stringstream input("define");
@@ -138,6 +148,7 @@ void testLexer()
     testNegative();
     testIdentifier();
     testIfThenElse();
+    testLetIn();
     testDefine();
     testMultiple();
     testWhitespace();

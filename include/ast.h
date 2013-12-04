@@ -68,6 +68,18 @@ namespace AST
         virtual llvm::Value *generate(Generator *generator);
     };
 
+    class Let : public Expression
+    {
+        std::vector< std::pair<Expression*, Expression*> > assignments;
+        AST::Expression *body;
+      public:
+        Let(std::vector< std::pair<Expression*, Expression*> > &_assignments, Expression *_body) : assignments(_assignments), body(_body) {}
+
+        std::vector< std::pair<Expression*, Expression*> > getAssignments() { return assignments; }
+        Expression *getBody() { return body; }
+        virtual llvm::Value *generate(Generator *generator);
+    };
+
     class Function : public Tree
     {
         std::string name;

@@ -57,6 +57,11 @@ llvm::Value *Conditional::generate(Generator *generator)
     return generator->generateConditional(this);
 }
 
+llvm::Value *Let::generate(Generator *generator)
+{
+    throw "up";
+}
+
 llvm::Function *Function::generate(Generator *generator)
 {
     llvm::Function *fn = generator->buildFunction(name, parameters.size());
