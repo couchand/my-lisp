@@ -70,12 +70,12 @@ namespace AST
 
     class Let : public Expression
     {
-        std::vector< std::pair<Expression*, Expression*> > assignments;
+        std::vector< std::pair<std::string, Expression*> > assignments;
         AST::Expression *body;
       public:
-        Let(std::vector< std::pair<Expression*, Expression*> > &_assignments, Expression *_body) : assignments(_assignments), body(_body) {}
+        Let(std::vector< std::pair<std::string, Expression*> > &_assignments, Expression *_body) : assignments(_assignments), body(_body) {}
 
-        std::vector< std::pair<Expression*, Expression*> > getAssignments() { return assignments; }
+        std::vector< std::pair<std::string, Expression*> > getAssignments() { return assignments; }
         Expression *getBody() { return body; }
         virtual llvm::Value *generate(Generator *generator);
     };

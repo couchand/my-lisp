@@ -44,6 +44,16 @@ llvm::Function *Generator::generateMain(std::vector<llvm::Function*> statements)
     return main;
 }
 
+llvm::Function *Generator::getCurrentFunction()
+{
+    return builder->GetInsertBlock()->getParent();
+}
+
+llvm::Value *Generator::generateStore(llvm::Value* value, llvm::Value* alloca)
+{
+        return builder->CreateStore(value, alloca);
+}
+
 void Generator::addParametersToScope(llvm::Function *fn, std::vector<std::string> parameters)
 {
     llvm::Function::arg_iterator argIt = fn->arg_begin();
@@ -54,7 +64,7 @@ void Generator::addParametersToScope(llvm::Function *fn, std::vector<std::string
     ){
         argIt->setName(parameters[i]);
         llvm::AllocaInst *alloca = createEntryBlockAlloca(fn, parameters[i]);
-        builder->CreateStore(argIt, alloca);
+        generateStore(argIt, alloca);
         addValue(parameters[i], alloca);
     }
 }
@@ -133,6 +143,13 @@ llvm::Value *Generator::lookupVal(std::string name)
     llvm::Value *value = scope[name];
     if (!value) throw "unknown value";
     return value;
+}
+
+llvm::Value *Generator::replace(std::string name, llvm::Value *newValue)
+{
+    llvm::Value* oldValue = scope[name];
+    scope[name] = newValue;
+    return oldValue;
 }
 
 llvm::Value *Generator::generate(AST::Expression *expression)

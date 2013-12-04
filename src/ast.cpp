@@ -59,7 +59,41 @@ llvm::Value *Conditional::generate(Generator *generator)
 
 llvm::Value *Let::generate(Generator *generator)
 {
-    throw "up";
+    std::vector<llvm::Value*> oldScope;
+
+    llvm::Function *fn = generator->getCurrentFunction();
+
+    for (unsigned i = 0; i < assignments.size(); ++i)
+    {
+        const std::string &name = assignments[i].first;
+        AST::Expression *initializer = assignments[i].second;
+
+        llvm::Value *initial;
+        if (initializer)
+        {
+            initial = generator->generate(initializer);
+            if (initial == 0) throw "unable to generate initializer";
+        }
+        else
+        {
+            initial = generator->getConstant(0.0);
+        }
+
+        llvm::AllocaInst *alloca = generator->createEntryBlockAlloca(fn, name);
+        generator->generateStore(initial, alloca);
+
+        oldScope.push_back(generator->replace(name, alloca));
+    }
+
+    llvm::Value *bodyVal = generator->generate(body);
+    if (body == 0) throw "unable to generate body";
+
+    for (unsigned i = 0; i < assignments.size(); ++i)
+    {
+        generator->replace(assignments[i].first, oldScope[i]);
+    }
+
+    return bodyVal;
 }
 
 llvm::Function *Function::generate(Generator *generator)

@@ -46,6 +46,7 @@ class Generator
     llvm::Function *buildFunction(std::string name, unsigned parameters);
     llvm::Function *expressionToFunction(AST::Expression *expression);
     llvm::Function *generateMain(std::vector<llvm::Function*> statements);
+    llvm::Function *getCurrentFunction();
 
     void addParametersToScope(llvm::Function *fn, std::vector<std::string> parameters);
     void generateBody(llvm::Function *fn, AST::Expression *body);
@@ -59,9 +60,11 @@ class Generator
     llvm::AllocaInst *createEntryBlockAlloca(llvm::Function *fn, std::string name);
     llvm::BasicBlock *createEntryBlock(llvm::Function *fn);
     llvm::Value *generateLoad(std::string name, llvm::Value *alloca);
+    llvm::Value *generateStore(llvm::Value *value, llvm::Value *alloca);
 
     void addGlobal(std::string name, double val);
     void addValue(std::string name, llvm::Value *val);
+    llvm::Value *replace(std::string name, llvm::Value *newValue);
 
     virtual llvm::Function *lookupFn(std::string name);
     virtual llvm::Value *lookupVal(std::string name);

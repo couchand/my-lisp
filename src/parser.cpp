@@ -59,19 +59,23 @@ AST::Expression *Parser::parseLet()
 {
     getNextToken();
 
-    std::vector< std::pair<AST::Expression*, AST::Expression*> > assignments;
+    std::vector< std::pair<std::string, AST::Expression*> > assignments;
     while (currentToken != token_in)
     {
         AST::Expression *name = parseIdentifier();
         if (!name) throw "expected name";
 
+        AST::Identifier *id = dynamic_cast<AST::Identifier*>(name);
+        if (id == 0) throw "something strange happened";
+
         if (currentToken != '=') throw "expected =";
         getNextToken();
 
-        AST::Expression *assignment = parseExpression();
-        if (!assignment) throw "expected assignment expression";
+        AST::Expression *assignmentExpression = parseExpression();
+        if (!assignmentExpression) throw "expected assignment expression";
 
-        assignments.push_back(std::pair<AST::Expression*, AST::Expression*>(name, assignment));
+        std::pair<std::string, AST::Expression*> assignment(id->getName(), assignmentExpression);
+        assignments.push_back(assignment);
     }
     getNextToken();
 
