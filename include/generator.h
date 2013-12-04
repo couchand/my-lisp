@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <functional>
 
 #include "llvm/Module.h"
 #include "llvm/PassManager.h"
@@ -15,6 +16,8 @@
 #include "types.h"
 #include "builtins.h"
 #include "ast.h"
+
+typedef std::function<llvm::Value*()> generateFn;
 
 class Generator
 {
@@ -50,6 +53,7 @@ class Generator
     llvm::Function *generatePredicate(std::string name, std::vector<std::string> parameters, std::vector<std::string> predicates);
     llvm::Function *getCurrentFunction();
     llvm::Value *generateCall(std::string name, std::vector<llvm::Value*> arguments);
+    llvm::Value *generateMultiConditional(std::vector< std::pair<generateFn, generateFn> > cases, generateFn fallthrough);
 
     void addParametersToScope(llvm::Function *fn, std::vector<std::string> parameters);
     void generateBody(llvm::Function *fn, AST::Expression *body);

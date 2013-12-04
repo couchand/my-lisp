@@ -1,5 +1,5 @@
 CC := clang++
-CFLAGS := -g -Wall `llvm-config --cppflags` -O3
+CFLAGS := -std=c++11 -g -Wall `llvm-config --cppflags` -O3
 OFLAGS := -rdynamic
 SRC_DIR := src
 INC_DIR := include

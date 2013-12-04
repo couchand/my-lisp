@@ -208,9 +208,16 @@ llvm::Value *Generator::generateBool(AST::Expression *expression)
     );
 }
 
-llvm::Value *Generator::generateConditional(AST::Conditional *conditional)
+llvm::Value *Generator::generateMultiConditional(std::vector< std::pair<generateFn, generateFn> > cases, generateFn fallthrough)
 {
-    llvm::Value *conditionValue = generateBool(conditional->getCondition());
+    if (cases.empty()) return fallthrough();
+
+    for (unsigned i = 0; i < cases.size() - 1; ++i)
+    {
+        throw "no multi yet";
+    }
+
+    llvm::Value *conditionValue = cases[cases.size() - 1].first();
 
     llvm::Function *fn = builder->GetInsertBlock()->getParent();
 
@@ -224,13 +231,13 @@ llvm::Value *Generator::generateConditional(AST::Conditional *conditional)
     builder->CreateCondBr(conditionValue, thenBlock, elseBlock);
 
     builder->SetInsertPoint(thenBlock);
-    llvm::Value *thenValue = generate(conditional->getConsequent());
+    llvm::Value *thenValue = cases[cases.size() - 1].second();
     builder->CreateBr(mergeBlock);
     thenBlock = builder->GetInsertBlock();
 
     fn->getBasicBlockList().push_back(elseBlock);
     builder->SetInsertPoint(elseBlock);
-    llvm::Value *elseValue = generate(conditional->getAlternative());
+    llvm::Value *elseValue = fallthrough();
     builder->CreateBr(mergeBlock);
     elseBlock = builder->GetInsertBlock();
 
@@ -238,11 +245,26 @@ llvm::Value *Generator::generateConditional(AST::Conditional *conditional)
     builder->SetInsertPoint(mergeBlock);
     llvm::PHINode *phi = builder->CreatePHI(
         llvm::Type::getDoubleTy(*context),
-        2,
+        cases.size() + 1,
         "iftmp"
     );
     phi->addIncoming(thenValue, thenBlock);
     phi->addIncoming(elseValue, elseBlock);
 
     return phi;
+}
+
+llvm::Value *Generator::generateConditional(AST::Conditional *conditional)
+{
+    std::vector< std::pair<generateFn, generateFn> > cases;
+    std::pair<generateFn, generateFn> then;
+
+    then.first = [&]() { return generateBool(conditional->getCondition()); };
+    then.second = [&]() { return generate(conditional->getConsequent()); };
+
+    cases.push_back(then);
+
+    generateFn fallthrough = [&]() { return  generate(conditional->getAlternative()); };
+
+    return generateMultiConditional(cases, fallthrough);
 }
