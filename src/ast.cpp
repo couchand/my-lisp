@@ -108,7 +108,9 @@ llvm::Function *Function::generate(Generator *generator)
     generator->generateBody(fn, entry, body);
     generator->verifyFunction(fn);
 
-    generator->generatePredicate(name, parameterNames, parameterPredicates);
+    llvm::Function *pred = generator->generatePredicate(name, parameterNames, parameterPredicates);
+
+    generator->registerMethod(name, fn, pred);
 
     return fn;
 }

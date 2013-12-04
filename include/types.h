@@ -9,6 +9,8 @@
 
 typedef llvm::IRBuilder<> Builder;
 
+typedef std::function<llvm::Value*()> generateFn;
+
 class Generator;
 
 #endif

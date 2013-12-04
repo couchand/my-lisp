@@ -16,8 +16,7 @@
 #include "types.h"
 #include "builtins.h"
 #include "ast.h"
-
-typedef std::function<llvm::Value*()> generateFn;
+#include "dispatcher.h"
 
 class Generator
 {
@@ -25,6 +24,7 @@ class Generator
     llvm::Module *module;
     Builder *builder;
     std::map<std::string, llvm::Value*> scope;
+    Dispatcher* methods;
 
   public:
     Generator()
@@ -32,15 +32,16 @@ class Generator
         context = &llvm::getGlobalContext();
         builder = new Builder(*context);
         module = new llvm::Module("my-lisp", *context);
+        methods = new Dispatcher(this);
 
-        buildFunction("add", 2);
-        buildFunction("sub", 2);
-        buildFunction("mul", 2);
-        buildFunction("quo", 2);
-        buildFunction("pow", 2);
-        buildFunction("root", 1);
-        buildFunction("print", 1);
-        buildFunction("lt", 2);
+        buildFunction("add", 2, true);
+        buildFunction("sub", 2, true);
+        buildFunction("mul", 2, true);
+        buildFunction("quo", 2, true);
+        buildFunction("pow", 2, true);
+        buildFunction("root", 1, true);
+        buildFunction("print", 1, true);
+        buildFunction("lt", 2, true);
     }
 
     Builder *getBuilder() { return builder; }
@@ -48,16 +49,19 @@ class Generator
     llvm::LLVMContext *getContext() { return context; }
 
     llvm::Function *buildFunction(std::string name, unsigned parameters);
+    llvm::Function *buildFunction(std::string name, unsigned parameters, bool builtin);
     llvm::Function *expressionToFunction(AST::Expression *expression);
     llvm::Function *generateMain(std::vector<llvm::Function*> statements);
     llvm::Function *generatePredicate(std::string name, std::vector<std::string> parameters, std::vector<std::string> predicates);
     llvm::Function *getCurrentFunction();
     llvm::Value *generateCall(std::string name, std::vector<llvm::Value*> arguments);
+    llvm::Value *generateCall(llvm::Function *fn, std::vector<llvm::Value*> arguments);
     llvm::Value *generateMultiConditional(std::vector< std::pair<generateFn, generateFn> > cases, generateFn fallthrough);
 
     void addParametersToScope(llvm::Function *fn, std::vector<std::string> parameters);
     void generateBody(llvm::Function *fn, AST::Expression *body);
     void generateBody(llvm::Function *fn, llvm::BasicBlock *block, AST::Expression *body);
+    void generateReturn(llvm::Value *value);
     void verifyFunction(llvm::Function *fn);
 
     llvm::ConstantFP *getConstant(double val);
@@ -69,11 +73,12 @@ class Generator
     llvm::Value *generateLoad(std::string name, llvm::Value *alloca);
     llvm::Value *generateStore(llvm::Value *value, llvm::Value *alloca);
 
+    void registerMethod(std::string name, llvm::Function *fn, llvm::Function *pred);
     void addGlobal(std::string name, double val);
     void addValue(std::string name, llvm::Value *val);
     llvm::Value *replace(std::string name, llvm::Value *newValue);
 
-    virtual llvm::Function *lookupFn(std::string name);
+    virtual llvm::Function *lookupFn(std::string name, std::vector<llvm::Value*> arguments);
     virtual llvm::Value *lookupVal(std::string name);
 
     virtual llvm::Value *generate(AST::Expression *expression);

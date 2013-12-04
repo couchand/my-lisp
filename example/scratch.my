@@ -1,0 +1,45 @@
+# ur-dispatch example
+
+define do(a b)
+  b
+
+define pa(d)
+  lt(d 33)
+define fa(d)
+  do(print(32) print(d))
+
+define pb(d)
+  lt(d 43)
+define fb(d)
+  do(print(42) print(d))
+
+define pc(d)
+  lt(d 44)
+define fc(d)
+  do(print(43) print(d))
+
+define pd(d)
+  lt(d 47)
+define fd(d)
+  do(print(46) print(d))
+
+define fe(d)
+  do(print(32) print(d))
+
+define dispatch(d)
+  if pa(d) then
+    fa(d)
+  else if pb(d) then
+    fb(d)
+  else if pc(d) then
+    fc(d)
+  else if pd(d) then
+    fd(d)
+  else
+    fe(d)
+
+dispatch(32)
+dispatch(42)
+dispatch(43)
+dispatch(46)
+dispatch(48)

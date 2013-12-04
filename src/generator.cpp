@@ -67,7 +67,7 @@ llvm::Function *Generator::generatePredicate(std::string name, std::vector<std::
 
         results = builder->CreateAnd(results, generateCall(predicates[i], argv), "andtmp");
     }
-    builder->CreateRet(results);
+    generateReturn(results);
 
     verifyFunction(pred);
 
@@ -76,11 +76,14 @@ llvm::Function *Generator::generatePredicate(std::string name, std::vector<std::
 
 llvm::Value *Generator::generateCall(std::string name, std::vector<llvm::Value*> arguments)
 {
-    llvm::Function *fn = lookupFn(name);
+    llvm::Function *fn = lookupFn(name, arguments);
     if (fn == 0) throw "unable to find function object";
+    return generateCall(fn, arguments);
+}
 
+llvm::Value *Generator::generateCall(llvm::Function *fn, std::vector<llvm::Value*> arguments)
+{
     if (fn->arg_size() != arguments.size()) throw "arity mismatch";
-
     return builder->CreateCall(fn, arguments, "calltmp");
 }
 
@@ -138,16 +141,26 @@ void Generator::generateBody(llvm::Function *fn, AST::Expression *body)
 
 void Generator::generateBody(llvm::Function *fn, llvm::BasicBlock *block, AST::Expression *body)
 {
-    llvm::Value *value = generate(body);
+    generateReturn(generate(body));
+}
+
+void Generator::generateReturn(llvm::Value *value)
+{
     builder->CreateRet(value);
 }
 
 void Generator::verifyFunction(llvm::Function *fn)
 {
+    fn->dump();
     llvm::verifyFunction(*fn);
 }
 
 llvm::Function *Generator::buildFunction(std::string name, unsigned parameters)
+{
+    return buildFunction(name, parameters, false);
+}
+
+llvm::Function *Generator::buildFunction(std::string name, unsigned parameters, bool builtin)
 {
     std::vector<llvm::Type*> doubles(
         parameters,
@@ -161,14 +174,20 @@ llvm::Function *Generator::buildFunction(std::string name, unsigned parameters)
             false
         ),
         llvm::Function::ExternalLinkage,
-        name,
+        (builtin ? name : "_" + name),
         module
     );
 }
 
-llvm::Function *Generator::lookupFn(std::string name)
+void Generator::registerMethod(std::string name, llvm::Function *fn, llvm::Function *pred)
+{
+    methods->registerMethod(name, fn, pred);
+}
+
+llvm::Function *Generator::lookupFn(std::string name, std::vector<llvm::Value*> arguments)
 {
     llvm::Function *fn = module->getFunction(name);
+    if (fn == 0) fn = methods->dispatch(name, arguments);
     if (fn == 0) throw (name + " not found").c_str();
     return fn;
 }
@@ -210,6 +229,7 @@ llvm::Value *Generator::generateBool(AST::Expression *expression)
 
 llvm::Value *Generator::generateMultiConditional(std::vector< std::pair<generateFn, generateFn> > cases, generateFn fallthrough)
 {
+    std::cout << "generating for " << cases.size() << " cases" << std::endl;
     if (cases.empty()) return fallthrough();
 
     std::vector<llvm::Value*> results;
@@ -217,6 +237,8 @@ llvm::Value *Generator::generateMultiConditional(std::vector< std::pair<generate
     std::vector<llvm::BasicBlock*> thenBlocks;
 
     llvm::Function *fn = builder->GetInsertBlock()->getParent();
+
+    std::cout << "creating blocks" << std::endl;
 
     for (unsigned i = 0; i < cases.size(); ++i)
     {
@@ -236,14 +258,19 @@ llvm::Value *Generator::generateMultiConditional(std::vector< std::pair<generate
 
     for (unsigned i = 0; i < cases.size(); ++i)
     {
+        std::cout << "creating case " << i << std::endl;
         fn->getBasicBlockList().push_back(caseBlocks[i]);
         builder->SetInsertPoint(caseBlocks[i]);
+        std::cout << "calling generator fn..." << std::endl;
         llvm::Value *caseCondition = cases[i].first();
+        if (caseCondition == 0) throw "expected case condition";
         builder->CreateCondBr(caseCondition, thenBlocks[i], caseBlocks[i+1]);
 
         fn->getBasicBlockList().push_back(thenBlocks[i]);
         builder->SetInsertPoint(thenBlocks[i]);
-        results.push_back(cases[i].second());
+        llvm::Value *caseValue = cases[i].second();
+        if (caseValue == 0) throw "expected case value";
+        results.push_back(caseValue);
         builder->CreateBr(mergeBlock);
         thenBlocks[i] = builder->GetInsertBlock();
     }
@@ -254,6 +281,7 @@ llvm::Value *Generator::generateMultiConditional(std::vector< std::pair<generate
     builder->CreateBr(mergeBlock);
     thenBlocks[cases.size()] = elseBlock = builder->GetInsertBlock();
 
+    std::cout << "building phi" << std::endl;
     fn->getBasicBlockList().push_back(mergeBlock);
     builder->SetInsertPoint(mergeBlock);
     llvm::PHINode *phi = builder->CreatePHI(
