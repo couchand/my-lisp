@@ -65,7 +65,7 @@ llvm::Function *Generator::generatePredicate(std::string name, std::vector<std::
         argv.clear();
         argv.push_back(parameter);
 
-        results = builder->CreateAnd(results, generateCall(predicates[i], argv), "andtmp");
+        results = builder->CreateFMul(results, generateCall(predicates[i], argv), "andtmp");
     }
     builder->CreateRet(results);
 
@@ -200,7 +200,11 @@ llvm::Value *Generator::generate(AST::Expression *expression)
 llvm::Value *Generator::generateBool(AST::Expression *expression)
 {
     llvm::Value *value = expression->generate(this);
+    return generateNotZero(value);
+}
 
+llvm::Value *Generator::generateNotZero(llvm::Value *value)
+{
     return builder->CreateFCmpONE(
         value,
         llvm::ConstantFP::get(*context, llvm::APFloat(0.0)),

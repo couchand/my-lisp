@@ -63,6 +63,7 @@ class Generator
     llvm::ConstantFP *getConstant(double val);
     llvm::GlobalVariable *generateGlobal(std::string name, double val);
     llvm::Value *generateBool(AST::Expression *expression);
+    llvm::Value *generateNotZero(llvm::Value *value);
     llvm::Value *generateConditional(AST::Conditional *conditional);
     llvm::AllocaInst *createEntryBlockAlloca(llvm::Function *fn, std::string name);
     llvm::BasicBlock *createEntryBlock(llvm::Function *fn);

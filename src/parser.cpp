@@ -106,6 +106,7 @@ AST::Function *Parser::parseDefine()
         {
             if (getNextToken() != token_identifier) throw "expected identifier for predicate";
             parameter.second = lexer->getLastIdentifier();
+            getNextToken();
         }
 
         parameters.push_back(parameter);
